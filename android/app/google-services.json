@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "327591835002",
+    "project_id": "design-app-2671f",
+    "storage_bucket": "design-app-2671f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:327591835002:android:33fb50863c757be43b12c3",
+        "android_client_info": {
+          "package_name": "com.example.urban_hamony"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDv76iyw2IT7ci9VZbj9l_alCuYlf7vPU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:327591835002:android:415bb9d57e7070cb3b12c3",
+        "android_client_info": {
+          "package_name": "com.example.urban_harmony"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDv76iyw2IT7ci9VZbj9l_alCuYlf7vPU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
