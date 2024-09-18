@@ -1,4 +1,4 @@
-package com.example.urban_hamony;
+package com.example.urban_harmony;
 
 import io.flutter.embedding.android.FlutterActivity;
 
