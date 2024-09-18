@@ -4,11 +4,22 @@ import 'package:provider/provider.dart';
 import 'package:urban_hamony/providers/root.dart';
 
 import 'app.dart';
+import 'bloc/app_bloc.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (context) => RootProvider()),
-  ], child: const Application()));
+  // final spf = await SharedPreferences.getInstance();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(
+      ChangeNotifierProvider(
+        create: (_) => AppBloc(),
+        child: Application(
+          // sharedPreferences : spf,
+        ),
+      )
+  );
+
 }

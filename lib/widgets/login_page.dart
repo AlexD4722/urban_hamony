@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:urban_hamony/services/database_service.dart';
 import 'package:urban_hamony/widgets/signup.dart';
 
 import '../services/auth_google_service.dart';
@@ -13,6 +14,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  DatabaseService _databaseService = DatabaseService();
+
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -34,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _entryField(String title, {bool isPassword = false}) {
+  Widget _entryField(String title, TextEditingController controller, {bool isPassword = false}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -48,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
             height: 10,
           ),
           TextField(
+              controller: controller,
               obscureText: isPassword,
               decoration: InputDecoration(
                   border: InputBorder.none,
@@ -59,26 +65,35 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _submitButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xfffbb448), Color(0xfff7892b)])),
-      child: Text(
-        'Login',
-        style: TextStyle(fontSize: 20, color: Colors.white),
+    return InkWell(
+      onTap: () async {
+        final currentUser = await _databaseService.login(
+          _emailController.text,
+          _passwordController.text
+        );
+        ///
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.symmetric(vertical: 15),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.shade200,
+                  offset: Offset(2, 4),
+                  blurRadius: 5,
+                  spreadRadius: 2)
+            ],
+            gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [Color(0xfffbb448), Color(0xfff7892b)])),
+        child: Text(
+          'Login',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
       ),
     );
   }
@@ -123,10 +138,7 @@ class _LoginPageState extends State<LoginPage> {
       elevation: 4,
       child: InkWell(
         onTap: () async {
-          final authGoogle =  await AuthService().signInWithGoogle();
-          print(authGoogle.user?.displayName);
-          print(authGoogle.user?.email);
-          print(authGoogle.user?.uid);
+          final currentUser = await AuthService().signInWithGoogle();
         },
         borderRadius: BorderRadius.circular(10),
         splashColor: Colors.white,
@@ -203,8 +215,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("Email id"),
-        _entryField("Password", isPassword: true),
+        _entryField("Email", _emailController),
+        _entryField("Password", _passwordController, isPassword: true),
       ],
     );
   }
