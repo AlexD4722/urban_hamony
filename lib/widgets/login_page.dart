@@ -124,7 +124,9 @@ class _LoginPageState extends State<LoginPage> {
       child: InkWell(
         onTap: () async {
           final authGoogle =  await AuthService().signInWithGoogle();
-          print(authGoogle);
+          print(authGoogle.user?.displayName);
+          print(authGoogle.user?.email);
+          print(authGoogle.user?.uid);
         },
         borderRadius: BorderRadius.circular(10),
         splashColor: Colors.white,
