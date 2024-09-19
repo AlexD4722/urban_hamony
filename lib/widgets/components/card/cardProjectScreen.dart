@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class CardProject extends StatelessWidget {
+class CardProjectScreen extends StatelessWidget {
   final String title;
   final String description;
   final String imageUrl;
 
-  const CardProject({
+  const CardProjectScreen({
     Key? key,
     required this.title,
     required this.description,
@@ -27,8 +27,6 @@ class CardProject extends StatelessWidget {
             child: Image.asset(
               "lib/assets/images/$imageUrl",
               fit: BoxFit.cover,
-              width: 150,
-              height: 150,
             ),
           ),
         ),

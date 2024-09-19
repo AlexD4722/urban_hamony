@@ -103,10 +103,10 @@ class HomeScreen extends StatelessWidget {
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: projects.length + 2,
-                      // Tăng itemCount lên 1 để thêm widget vuông
+
                       itemBuilder: (context, index) {
                         if (index == 0) {
-                          // Widget vuông ở đầu danh sách
+
                           return Padding(
                             padding: const EdgeInsets.only(right: 10),
                             child: _addCardProject(),
