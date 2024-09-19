@@ -59,10 +59,8 @@ class AuthService {
       accessToken: gAuth.accessToken,
       idToken: gAuth.idToken,
     );
-    final currentUser = await FirebaseAuth.instance.signInWithCredential(credential);
-    await _databaseService.addUser(currentUser.user!.email.toString(), currentUser.user!.uid.toString());
-    final user = await _databaseService.login(currentUser.user!.email.toString(), currentUser.user!.uid.toString());
-    return user;
+    final currentUser = await FirebaseAuth.instance.signInWithCredential(credential);await _databaseService.addUser(currentUser.user!.email.toString(), currentUser.user!.uid.toString());
+    return currentUser;
   }
 
 }

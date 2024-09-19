@@ -53,7 +53,10 @@ class DatabaseService {
         UserModel user = UserModel.fromJson(data.toJson());
         if(email == user.email && password == user.password){
           UserModel userWithoutPassword = UserModel(
-            fullName: user.fullName,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            gender: user.gender,
+            urlAvatar: user.urlAvatar,
             email: user.email,
             role: user.role,
             isHasProfile: user.isHasProfile
@@ -77,8 +80,11 @@ class DatabaseService {
       return false;
     UserModel user = UserModel(
       email: email,
+      gender: null,
+      urlAvatar: null,
+      firstName: null,
+      lastName: null,
       password: password,
-      fullName: null,
       isHasProfile: false,
       role: null,
     );

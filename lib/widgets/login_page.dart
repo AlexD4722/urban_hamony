@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:urban_hamony/services/database_service.dart';
 import 'package:urban_hamony/widgets/signup.dart';
 
+import '../models/auth_model.dart';
 import '../services/auth_google_service.dart';
 import 'components/bezierContainer.dart';
+
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key, this.title}) : super(key: key);
 
@@ -39,7 +41,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _entryField(String title, TextEditingController controller, {bool isPassword = false}) {
+  Widget _entryField(String title, TextEditingController controller,
+      {bool isPassword = false}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -68,9 +71,8 @@ class _LoginPageState extends State<LoginPage> {
     return InkWell(
       onTap: () async {
         final currentUser = await _databaseService.login(
-          _emailController.text,
-          _passwordController.text
-        );
+            _emailController.text, _passwordController.text);
+
         ///
       },
       child: Container(
@@ -139,6 +141,13 @@ class _LoginPageState extends State<LoginPage> {
       child: InkWell(
         onTap: () async {
           final currentUser = await AuthService().signInWithGoogle();
+          print("========= $currentUser");
+          await _databaseService.addUser(currentUser.user!.email.toString(),
+              currentUser.user!.uid.toString());
+          final user = await _databaseService.login(
+              currentUser.user!.email.toString(),
+              currentUser.user!.uid.toString());
+          // save data to local
         },
         borderRadius: BorderRadius.circular(10),
         splashColor: Colors.white,
@@ -147,8 +156,9 @@ class _LoginPageState extends State<LoginPage> {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 10,top: 5),
-                  child: Image.asset("lib/assets/images/google.png",
+                  padding: const EdgeInsets.only(left: 10, top: 5),
+                  child: Image.asset(
+                    "lib/assets/images/google.png",
                     width: 40,
                     height: 40,
                   ),
@@ -158,16 +168,12 @@ class _LoginPageState extends State<LoginPage> {
                       padding: EdgeInsets.all(8),
                       child: Text(
                         "Sign in with Google",
-                        style:  TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16
-                        ),
-                      )
-                  ),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 16),
+                      )),
                 ),
               ],
-            )
-        ),
+            )),
       ),
     );
   }
@@ -226,44 +232,44 @@ class _LoginPageState extends State<LoginPage> {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
         body: Container(
-          height: height,
-          child: Stack(
-            children: <Widget>[
-              Positioned(
-                  top: -height * .15,
-                  right: -MediaQuery.of(context).size.width * .4,
-                  child: BezierContainer()),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(height: height * .2),
-                      _title(),
-                      SizedBox(height: 50),
-                      _emailPasswordWidget(),
-                      SizedBox(height: 20),
-                      _submitButton(),
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        alignment: Alignment.centerRight,
-                        child: Text('Forgot Password ?',
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w500)),
-                      ),
-                      _divider(),
-                      _googleButton(),
-                      SizedBox(height: height * .055),
-                      _createAccountLabel(),
-                    ],
+      height: height,
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+              top: -height * .15,
+              right: -MediaQuery.of(context).size.width * .4,
+              child: BezierContainer()),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: height * .2),
+                  _title(),
+                  SizedBox(height: 50),
+                  _emailPasswordWidget(),
+                  SizedBox(height: 20),
+                  _submitButton(),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    alignment: Alignment.centerRight,
+                    child: Text('Forgot Password ?',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500)),
                   ),
-                ),
+                  _divider(),
+                  _googleButton(),
+                  SizedBox(height: height * .055),
+                  _createAccountLabel(),
+                ],
               ),
-              // Positioned(top: 40, left: 0, child: _backButton()),
-            ],
+            ),
           ),
-        ));
+          // Positioned(top: 40, left: 0, child: _backButton()),
+        ],
+      ),
+    ));
   }
 }
