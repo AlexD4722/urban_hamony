@@ -13,13 +13,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(
-      ChangeNotifierProvider(
-        create: (_) => AppBloc(),
-        child: Application(
-          // sharedPreferences : spf,
-        ),
-      )
-  );
-
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => RootProvider()),
+  ], child: const Application()));
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:urban_hamony/services/database_service.dart';
+import 'package:urban_hamony/widgets/screens/chooseRole.dart';
 import 'package:urban_hamony/widgets/signup.dart';
 
 import '../models/auth_model.dart';
@@ -147,7 +148,20 @@ class _LoginPageState extends State<LoginPage> {
           final user = await _databaseService.login(
               currentUser.user!.email.toString(),
               currentUser.user!.uid.toString());
-          // save data to local
+          if (user?.isHasProfile == false) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => ChooseRole()),
+                  (Route<dynamic> route) => false,
+            );
+          }else {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => ChooseRole()),
+                  (Route<dynamic> route) => false,
+            );
+          }
+
         },
         borderRadius: BorderRadius.circular(10),
         splashColor: Colors.white,

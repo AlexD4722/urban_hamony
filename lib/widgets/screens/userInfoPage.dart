@@ -149,7 +149,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xffe76404),
+                backgroundColor: Color(0xFFE53935),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
