@@ -3,6 +3,7 @@ import 'package:urban_hamony/widgets/signup.dart';
 
 import '../services/auth_google_service.dart';
 import 'components/bezierContainer.dart';
+
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key, this.title}) : super(key: key);
 
@@ -13,26 +14,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  Widget _backButton() {
-    return InkWell(
-      onTap: () {
-        Navigator.pop(context);
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(left: 0, top: 10, bottom: 10),
-              child: Icon(Icons.keyboard_arrow_left, color: Colors.black),
-            ),
-            Text('Back',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _entryField(String title, {bool isPassword = false}) {
     return Container(
@@ -123,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
       elevation: 4,
       child: InkWell(
         onTap: () async {
-          final authGoogle =  await AuthService().signInWithGoogle();
+          final authGoogle = await AuthService().signInWithGoogle();
           print(authGoogle.user?.displayName);
           print(authGoogle.user?.email);
           print(authGoogle.user?.uid);
@@ -135,8 +116,9 @@ class _LoginPageState extends State<LoginPage> {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 10,top: 5),
-                  child: Image.asset("lib/assets/images/google.png",
+                  padding: const EdgeInsets.only(left: 10, top: 5),
+                  child: Image.asset(
+                    "lib/assets/images/google.png",
                     width: 40,
                     height: 40,
                   ),
@@ -146,16 +128,12 @@ class _LoginPageState extends State<LoginPage> {
                       padding: EdgeInsets.all(8),
                       child: Text(
                         "Sign in with Google",
-                        style:  TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16
-                        ),
-                      )
-                  ),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 16),
+                      )),
                 ),
               ],
-            )
-        ),
+            )),
       ),
     );
   }
@@ -214,44 +192,44 @@ class _LoginPageState extends State<LoginPage> {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
         body: Container(
-          height: height,
-          child: Stack(
-            children: <Widget>[
-              Positioned(
-                  top: -height * .15,
-                  right: -MediaQuery.of(context).size.width * .4,
-                  child: BezierContainer()),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(height: height * .2),
-                      _title(),
-                      SizedBox(height: 50),
-                      _emailPasswordWidget(),
-                      SizedBox(height: 20),
-                      _submitButton(),
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        alignment: Alignment.centerRight,
-                        child: Text('Forgot Password ?',
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w500)),
-                      ),
-                      _divider(),
-                      _googleButton(),
-                      SizedBox(height: height * .055),
-                      _createAccountLabel(),
-                    ],
+      height: height,
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+              top: -height * .15,
+              right: -MediaQuery.of(context).size.width * .4,
+              child: BezierContainer()),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: height * .2),
+                  _title(),
+                  SizedBox(height: 50),
+                  _emailPasswordWidget(),
+                  SizedBox(height: 20),
+                  _submitButton(),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    alignment: Alignment.centerRight,
+                    child: Text('Forgot Password ?',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500)),
                   ),
-                ),
+                  _divider(),
+                  _googleButton(),
+                  SizedBox(height: height * .055),
+                  _createAccountLabel(),
+                ],
               ),
-              // Positioned(top: 40, left: 0, child: _backButton()),
-            ],
+            ),
           ),
-        ));
+          // Positioned(top: 40, left: 0, child: _backButton()),
+        ],
+      ),
+    ));
   }
 }
