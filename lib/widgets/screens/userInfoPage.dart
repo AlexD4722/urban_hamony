@@ -45,7 +45,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
     setState(() {
       _showFinishButton = _firstNameController.text.isNotEmpty &&
           _lastNameController.text.isNotEmpty &&
-          _selectedGender != null;
+          _selectedGender != null && _image != null;
     });
   }
   Future<void> _getImage() async {
