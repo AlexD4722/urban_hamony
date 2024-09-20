@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:urban_hamony/services/auth_google_service.dart';
 import 'package:urban_hamony/services/database_service.dart';
+import 'package:urban_hamony/widgets/screens/chooseRole.dart';
 
 import 'components/bezierContainer.dart';
 import 'login_page.dart';
@@ -67,13 +68,17 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _submitButton() {
     return InkWell(
-      onTap: ()async{
-
+      onTap: () async {
+        print('Clicked');
         if(_passwordController.text == _comfirmPasswordController.text){
           final signUpStatus = await _databaseService.addUser(_emailController.text, _passwordController.text);
           if(signUpStatus){
             final currentUser = await _databaseService.login(_emailController.text, _passwordController.text);
             print(currentUser?.email);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => ChooseRole(email: currentUser!.email.toString())),
+            );
           } else {
             print('Sign Up Failed');
           }

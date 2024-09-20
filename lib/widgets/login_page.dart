@@ -6,6 +6,7 @@ import 'package:urban_hamony/widgets/signup.dart';
 import '../models/auth_model.dart';
 import '../services/auth_google_service.dart';
 import 'components/bezierContainer.dart';
+import 'layout.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key, this.title}) : super(key: key);
@@ -73,8 +74,17 @@ class _LoginPageState extends State<LoginPage> {
       onTap: () async {
         final currentUser = await _databaseService.login(
             _emailController.text, _passwordController.text);
-
-        ///
+        if(currentUser?.isHasProfile == true){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Layout()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => ChooseRole(email: currentUser!.email.toString())),
+          );
+        }
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -142,24 +152,22 @@ class _LoginPageState extends State<LoginPage> {
       child: InkWell(
         onTap: () async {
           final currentUser = await AuthService().signInWithGoogle();
-          print("========= $currentUser");
           await _databaseService.addUser(currentUser.user!.email.toString(),
               currentUser.user!.uid.toString());
           final user = await _databaseService.login(
               currentUser.user!.email.toString(),
               currentUser.user!.uid.toString());
           if (user?.isHasProfile == false) {
-            Navigator.pushAndRemoveUntil(
+            Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ChooseRole()),
-                  (Route<dynamic> route) => false,
+              MaterialPageRoute(builder: (context) => ChooseRole(
+                  email : currentUser.user!.email.toString()
+                  )),
             );
-          }else {
-            Navigator.pushAndRemoveUntil(
+          } else {
+            Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ChooseRole()),
-                  (Route<dynamic> route) => false,
-            );
+              MaterialPageRoute(builder: (context) => Layout()),);
           }
 
         },

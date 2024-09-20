@@ -1,19 +1,25 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:urban_hamony/services/database_service.dart';
 import 'dart:io';
 
+import '../../services/storage_service.dart';
 import '../components/bezierContainer.dart';
+import '../layout.dart';
 
 class UserInfoPage extends StatefulWidget {
   final String role;
-
-  UserInfoPage({Key? key, required this.role}) : super(key: key);
+  final String email;
+  UserInfoPage({Key? key, required this.role, required this.email}) : super(key: key);
 
   @override
   _UserInfoPageState createState() => _UserInfoPageState();
 }
 
 class _UserInfoPageState extends State<UserInfoPage> {
+  StorageService _storageService = StorageService();
+  DatabaseService _databaseService = DatabaseService();
   File? _image;
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -141,12 +147,29 @@ class _UserInfoPageState extends State<UserInfoPage> {
           ),
           if (_showFinishButton)
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/home',
-                      (route) => false,
+              onPressed: () async {
+                String? pfpUrl = await _storageService.uploadImage(
+                  file: _image,
+                  email: widget.email
                 );
+                if(pfpUrl != null) {
+                  bool createStatus = await _databaseService.createProfile(
+                      widget.email,
+                      pfpUrl,
+                      _firstNameController.text,
+                      _lastNameController.text,
+                      _selectedGender.toString(),
+                      widget.role
+                  );
+                  if(createStatus){
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => Layout()),
+
+                    );
+                  }
+                }
+
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFFE53935),

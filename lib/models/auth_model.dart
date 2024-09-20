@@ -10,7 +10,7 @@ class UserModel {
   String? email;
   String? password;
   bool? isHasProfile;
-  String ? gender;
+  String? gender;
   UserModel({
     this.urlAvatar,
     this.firstName,

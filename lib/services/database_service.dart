@@ -7,10 +7,10 @@ import 'package:urban_hamony/models/auth_model.dart';
 
 class DatabaseService {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
-  CollectionReference? _chatsCollection;
+  CollectionReference? _usersCollection;
 
   void _setupCollectionReferences() {
-    _chatsCollection = _firebaseFirestore
+    _usersCollection = _firebaseFirestore
         .collection('users')
         .withConverter<UserModel>(
         fromFirestore: (snapshot, _) =>
@@ -20,7 +20,7 @@ class DatabaseService {
 
   Future<bool> getUser(String email) async {
     try{
-      QuerySnapshot querySnapshot = await _chatsCollection!
+      QuerySnapshot querySnapshot = await _usersCollection!
           .where('email', isEqualTo: email)
           .get();
       if (querySnapshot.docs.isNotEmpty) {
@@ -38,12 +38,12 @@ class DatabaseService {
   }
 
   Future<UserModel?> login(String email, String password) async {
-    if (_chatsCollection == null) {
+    if (_usersCollection == null) {
       _setupCollectionReferences();
     }
 
     try {
-      QuerySnapshot querySnapshot = await _chatsCollection!
+      QuerySnapshot querySnapshot = await _usersCollection!
           .where('email', isEqualTo: email)
           .get();
 
@@ -74,7 +74,6 @@ class DatabaseService {
     }
   }
 
-
   Future<bool> addUser(String email, String password) async {
     if(email == null || password == null || email.isEmpty || password.isEmpty)
       return false;
@@ -88,7 +87,7 @@ class DatabaseService {
       isHasProfile: false,
       role: null,
     );
-    if (_chatsCollection == null) {
+    if (_usersCollection == null) {
           _setupCollectionReferences();
     }
     try {
@@ -96,13 +95,40 @@ class DatabaseService {
       if(querry){
         return false;
       }
-      await _chatsCollection?.add(user);
+      await _usersCollection?.add(user);
       return true;
     } catch (e) {
       return false;
     }
   }
 
+  Future<bool> createProfile(String email, String url, String firstName, String lastName, String gender, String role) async {
+    if (_usersCollection == null) {
+      _setupCollectionReferences();
+    }
+    try{
+      QuerySnapshot querySnapshot = await _usersCollection!
+          .where('email', isEqualTo: email)
+          .get();
+      if (querySnapshot.docs.isNotEmpty) {
+        QueryDocumentSnapshot doc = querySnapshot.docs.first;
+        await doc.reference.update({
+          'urlAvatar': url,
+          'firstName': firstName,
+          'isHasProfile': true,
+          'lastName': lastName,
+          'gender': gender,
+          'role': role,
+        });
+        return true;
+      } else {
+        return false;
+      }
+    } catch(e){
+      print(e);
+      return false;
+    }
+  }
 
   // Future<bool> checkChatRoomExists(String uid1, String uid2) async {
   //   String chatID = generateChatID(uid1: uid1, uid2: uid2);
@@ -144,12 +170,12 @@ class DatabaseService {
   //   await docRef.set(chat);
   // }
 
-  String generateChatID({required String uid1, required String uid2}) {
-    List uids = [uid1, uid2];
-    uids.sort();
-    String chatID = uids.fold("", (id, uid) => "$id$uid");
-    return chatID;
-  }
+  // String generateChatID({required String uid1, required String uid2}) {
+  //   List uids = [uid1, uid2];
+  //   uids.sort();
+  //   String chatID = uids.fold("", (id, uid) => "$id$uid");
+  //   return chatID;
+  // }
 
   // Future<void> sendChatMessage(String uid1, String uid2,
   //     Message message) async {

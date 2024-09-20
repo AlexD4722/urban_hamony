@@ -4,7 +4,8 @@ import 'package:urban_hamony/widgets/screens/userInfoPage.dart';
 import '../components/bezierContainer.dart';
 
 class ChooseRole extends StatefulWidget {
-  ChooseRole({Key? key}) : super(key: key);
+  final String email;
+  ChooseRole({super.key, required this.email});
 
   @override
   _ChooseRoleState createState() => _ChooseRoleState();
@@ -165,7 +166,7 @@ class _ChooseRoleState extends State<ChooseRole> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => UserInfoPage(role: selectedRole!),
+            builder: (context) => UserInfoPage(role: selectedRole!, email: widget.email ),
           ),
         );
       },
