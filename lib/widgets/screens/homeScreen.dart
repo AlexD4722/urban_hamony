@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'dart:math' as math;
-
 import '../components/card/cardBlog.dart';
 import '../components/card/cardProject.dart';
 import 'drawScreen.dart';
