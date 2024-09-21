@@ -49,6 +49,8 @@ dependencies:
   flutter_native_splash: ^2.4.1
   google_fonts: ^6.2.1
   flutter_widget_from_html: ^0.15.2
+  cached_network_image: ^3.4.1
+
 
 flutter_native_splash:
   android: true
