@@ -71,6 +71,13 @@ dev_dependencies:
 flutter:
   assets:
     - lib/assets/images/
+    - lib/assets/images/Table/
+    - lib/assets/images/Chair/
+    - lib/assets/images/Bed/
+    - lib/assets/images/Door/
+    - lib/assets/images/Tree/
+    - lib/assets/images/Window/
+    - lib/assets/images_list.json
 
 
   uses-material-design: true

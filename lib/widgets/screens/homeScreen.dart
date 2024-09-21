@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'dart:math' as math;
 
 import '../components/card/cardBlog.dart';
 import '../components/card/cardProject.dart';
+import 'drawScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -109,7 +111,7 @@ class HomeScreen extends StatelessWidget {
 
                           return Padding(
                             padding: const EdgeInsets.only(right: 10),
-                            child: _addCardProject(),
+                            child: _addCardProject(context),
                           );
                         } else if (index == projects.length + 1) {
                           // "Show More" widget at the end of the list
@@ -224,9 +226,14 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _addCardProject() {
+  Widget _addCardProject(BuildContext context) {
     return GestureDetector(
-      onTap: () => {},
+      onTap: () => {
+      Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DrawScreen()),
+      )
+      },
       child: Column(
         children: [
           Card(
