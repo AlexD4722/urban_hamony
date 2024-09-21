@@ -15,7 +15,7 @@ class Application extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      home: Layout(),
+      home: LoginPage(),
       theme: ThemeData(
         fontFamily: 'Poppins', // Áp dụng font Poppins cho toàn bộ ứng dụng
       ),

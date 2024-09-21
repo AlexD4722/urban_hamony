@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "327591835002-2ame6p64c1vknd6c0a3tp4m6jr1r5l07.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.urban_harmony",
+            "certificate_hash": "f7f07c0b2336909e3860c37f9adf161a5d13dd04"
+          }
+        },
+        {
           "client_id": "327591835002-oucnj7f36a3bilbaenj0r027ob9rbcu3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
