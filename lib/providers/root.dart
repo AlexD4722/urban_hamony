@@ -1,24 +1,12 @@
+import 'package:flutter/material.dart';
 
-import 'package:flutter/cupertino.dart';
 class RootProvider with ChangeNotifier {
-  String pageIndex = 'Home';
-  void setPageIndex(String index) {
-    pageIndex = index;
-    notifyListeners();
-  }
+  int _pageIndex = 0;
 
-  int getPageIndex() {
-    switch (pageIndex) {
-      case 'Home':
-        return 0;
-      case 'Project':
-        return 1;
-      case 'Gallery':
-        return 2;
-      case 'Profile':
-        return 3;
-      default:
-        return 0;
-    }
+  int get pageIndex => _pageIndex;
+
+  void setPageIndex(int index) {
+    _pageIndex = index;
+    notifyListeners();
   }
 }

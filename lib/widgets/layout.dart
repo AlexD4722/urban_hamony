@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:urban_hamony/widgets/screens/galleryScreen.dart';
 import 'package:urban_hamony/widgets/screens/homeScreen.dart';
+import 'package:urban_hamony/widgets/screens/productScreen.dart';
 import 'package:urban_hamony/widgets/screens/profileScreen.dart';
 import 'package:urban_hamony/widgets/screens/projectScreen.dart';
 import '../providers/root.dart';
-import 'dart:math' as math;
 
 class Layout extends StatefulWidget {
   const Layout({super.key});
@@ -17,24 +17,32 @@ class Layout extends StatefulWidget {
 }
 
 class _LayoutState extends State<Layout> {
-  final HashMap<String, Widget> screens =
-      HashMap<String, Widget>.fromIterables([
+  final HashMap<String, Widget> screens = HashMap<String, Widget>.fromIterables([
     'Home',
+    'Product',
     'Project',
     'Gallery',
     'Profile'
   ], [
     const HomeScreen(),
+    const ProductScreen(),
     const ProjectScreen(),
     const GalleryScreen(),
     const ProfileScreen()
   ]);
-  final List<String> screenNames = ['Home', 'Project', 'Gallery', 'Profile'];
+
+  final List<String> screenNames = ['Home', 'Product', 'Project', 'Gallery', 'Profile'];
+
   final _navBarItems = [
     SalomonBottomBarItem(
       icon: const Icon(Icons.home),
       title: const Text("Home"),
       selectedColor: Colors.orange,
+    ),
+    SalomonBottomBarItem(
+      icon: const Icon(Icons.category),
+      title: const Text("Product"),
+      selectedColor: Colors.purple,
     ),
     SalomonBottomBarItem(
       icon: const Icon(Icons.work),
@@ -55,26 +63,21 @@ class _LayoutState extends State<Layout> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final padding = screenWidth * 0.05;
-    var selectedIndex =
-        context.select((RootProvider provider) => provider.pageIndex);
+    var selectedIndex = context.select((RootProvider provider) => provider.pageIndex);
     var setIndex = context.read<RootProvider>().setPageIndex;
     return Scaffold(
       body: SafeArea(
-        child: SizedBox(
-          child: screens[selectedIndex],
-        )
+        child: screens[screenNames[selectedIndex]]!,
       ),
       bottomNavigationBar: SalomonBottomBar(
-          currentIndex: context
-              .select((RootProvider provider) => provider.getPageIndex()),
-          selectedItemColor: const Color(0xff6200ee),
-          unselectedItemColor: const Color(0xff757575),
-          onTap: (index) {
-            setIndex(screenNames[index]);
-          },
-          items: _navBarItems),
+        currentIndex: selectedIndex,
+        selectedItemColor: const Color(0xff6200ee),
+        unselectedItemColor: const Color(0xff757575),
+        onTap: (index) {
+          setIndex(index);
+        },
+        items: _navBarItems,
+      ),
     );
   }
 }
