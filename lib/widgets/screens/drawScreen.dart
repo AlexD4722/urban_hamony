@@ -39,7 +39,7 @@ class _DrawScreenState extends State<DrawScreen> {
   Future<void> loadImagesMap() async {
     // Load file JSON từ assets
     String jsonString =
-        await rootBundle.loadString('lib/assets/images_list.json');
+        await rootBundle.loadString('assets/images_list.json');
     Map<String, dynamic> jsonData = json.decode(jsonString);
 
     // Chuyển dữ liệu JSON thành Map<String, List<ImageDetails>>
@@ -92,7 +92,7 @@ class _DrawScreenState extends State<DrawScreen> {
                         child: Container(
                           // Kích thước cố định cho tất cả ảnh
                           child: Image.asset(
-                            'lib/assets/images/$imageType/${imageDetails.fileName}', // Đường dẫn ảnh từ JSON
+                            'assets/images/$imageType/${imageDetails.fileName}', // Đường dẫn ảnh từ JSON
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -112,11 +112,11 @@ class _DrawScreenState extends State<DrawScreen> {
     setState(() {
       // Đường dẫn đầy đủ cho ảnh ban đầu
       String imagePath =
-          'lib/assets/images/$imageType/${imageDetails.fileName}';
+          'assets/images/$imageType/${imageDetails.fileName}';
 
       // Đường dẫn cho ảnh thay thế
       String alternateImagePath = imageDetails.alternateFileName != null
-          ? 'lib/assets/images/$imageType/${imageDetails.alternateFileName}'
+          ? 'assets/images/$imageType/${imageDetails.alternateFileName}'
           : imagePath;
 
       // Sử dụng kích thước mặc định, chỉ thay đổi chiều cao nếu ảnh thay thế có kích thước khác

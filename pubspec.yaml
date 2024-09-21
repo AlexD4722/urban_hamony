@@ -55,12 +55,12 @@ flutter_native_splash:
   web: true
 
 
-  background_image: "lib/assets/images/background_splash.jpg"
-  image: "lib/assets/images/logo_mini.png"
+  background_image: "assets/images/background_splash.jpg"
+  image: "assets/images/logo_mini.png"
   android_12:
     color: "#FFFFFF"
-    background_image: "lib/assets/images/background_splash.jpg"
-    image: "lib/assets/images/logo_mini.png"
+    background_image: "assets/images/background_splash.jpg"
+    image: "assets/images/logo_mini.png"
 
 dev_dependencies:
   flutter_test:
@@ -71,21 +71,21 @@ dev_dependencies:
 
 flutter:
   assets:
-    - lib/assets/images/
-    - lib/assets/images/Table/
-    - lib/assets/images/Chair/
-    - lib/assets/images/Bed/
-    - lib/assets/images/Door/
-    - lib/assets/images/Tree/
-    - lib/assets/images/Window/
-    - lib/assets/images_list.json
+    - assets/images/
+    - assets/images/Table/
+    - assets/images/Chair/
+    - assets/images/Bed/
+    - assets/images/Door/
+    - assets/images/Tree/
+    - assets/images/Window/
+    - assets/images_list.json
   fonts:
     - family: Poppins
       fonts:
-        - asset: lib/assets/fonts/Poppins-Regular.ttf
-        - asset: lib/assets/fonts/Poppins-Bold.ttf
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf
           weight: 700
-        - asset: lib/assets/fonts/Poppins-Italic.ttf
+        - asset: assets/fonts/Poppins-Italic.ttf
           style: italic
 
 

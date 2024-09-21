@@ -25,7 +25,7 @@ class CardProjectScreen extends StatelessWidget {
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             child: Image.asset(
-              "lib/assets/images/$imageUrl",
+              "assets/images/$imageUrl",
               fit: BoxFit.cover,
             ),
           ),

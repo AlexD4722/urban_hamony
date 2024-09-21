@@ -25,7 +25,7 @@ class CardBlog extends StatelessWidget {
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             child: Image.asset(
-              "lib/assets/images/$imageUrl",
+              "assets/images/$imageUrl",
               height: 200,
               width: double.infinity,
               fit: BoxFit.cover,

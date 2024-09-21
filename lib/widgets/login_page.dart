@@ -180,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 10, top: 5),
                   child: Image.asset(
-                    "lib/assets/images/google.png",
+                    "assets/images/google.png",
                     width: 40,
                     height: 40,
                   ),
@@ -236,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _title() {
     return Container(
       width: 80,
-      child: Image.asset('lib/assets/images/urban.png'),
+      child: Image.asset('assets/images/urban.png'),
     );
   }
 
