@@ -16,6 +16,9 @@ class Application extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       home: Layout(),
+      theme: ThemeData(
+        fontFamily: 'Poppins', // Áp dụng font Poppins cho toàn bộ ứng dụng
+      ),
       routes: {
         '/home': (context) => const Layout(),
       },

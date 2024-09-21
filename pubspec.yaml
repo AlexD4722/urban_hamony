@@ -47,6 +47,7 @@ dependencies:
   firebase_storage: ^12.3.1
   path: ^1.9.0
   flutter_native_splash: ^2.4.1
+  google_fonts: ^6.2.1
 
 flutter_native_splash:
   android: true
@@ -78,6 +79,14 @@ flutter:
     - lib/assets/images/Tree/
     - lib/assets/images/Window/
     - lib/assets/images_list.json
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: lib/assets/fonts/Poppins-Regular.ttf
+        - asset: lib/assets/fonts/Poppins-Bold.ttf
+          weight: 700
+        - asset: lib/assets/fonts/Poppins-Italic.ttf
+          style: italic
 
 
   uses-material-design: true
