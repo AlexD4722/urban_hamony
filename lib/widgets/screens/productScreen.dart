@@ -352,9 +352,14 @@ class HomeHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const SizedBox(width: 16),
+          const Text(
+            "Products",
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           IconBtnWithCounter(
-            // numOfitem: 3,
             svgSrc: cartIcon,
             press: () {},
           ),
@@ -424,7 +429,6 @@ class IconBtnWithCounter extends StatelessWidget {
     );
   }
 }
-
 
 class SectionTitle extends StatelessWidget {
   const SectionTitle({
