@@ -1,50 +1,36 @@
 import 'package:flutter/material.dart';
 
-import 'RoundedIconBtn.dart';
+class QuantitySelector extends StatelessWidget {
+  final int quantity;
+  final ValueChanged<int> onChanged;
 
-class QuantitySelector extends StatefulWidget {
-  const QuantitySelector({super.key});
-
-  @override
-  _QuantitySelectorState createState() => _QuantitySelectorState();
-}
-
-class _QuantitySelectorState extends State<QuantitySelector> {
-  int quantity = 1;
-
-  void _incrementQuantity() {
-    setState(() {
-      quantity++;
-    });
-  }
-
-  void _decrementQuantity() {
-    if (quantity > 1) {
-      setState(() {
-        quantity--;
-      });
-    }
-  }
+  const QuantitySelector({
+    Key? key,
+    required this.quantity,
+    required this.onChanged,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        RoundedIconBtn(
-          icon: Icons.remove,
-          press: _decrementQuantity,
+        IconButton(
+          onPressed: () {
+            if (quantity > 1) {
+              onChanged(quantity - 1);
+            }
+          },
+          icon: const Icon(Icons.remove),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Text(
-            "$quantity",
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+        Text(
+          quantity.toString(),
+          style: const TextStyle(fontSize: 16),
         ),
-        RoundedIconBtn(
-          icon: Icons.add,
-          showShadow: true,
-          press: _incrementQuantity,
+        IconButton(
+          onPressed: () {
+            onChanged(quantity + 1);
+          },
+          icon: const Icon(Icons.add),
         ),
       ],
     );

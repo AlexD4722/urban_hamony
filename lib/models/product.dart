@@ -21,7 +21,9 @@ class Product {
   });
 }
 
-// Our demo Products
+const String description =
+    "Wireless Controller for PS4™ gives you what you want in your gaming from over precision control your games to sharing …";
+
 List<Product> demoProducts = [
   Product(
     id: 1,
@@ -98,6 +100,3 @@ List<Product> demoProducts = [
     isPopular: true,
   ),
 ];
-
-const String description =
-    "Wireless Controller for PS4™ gives you what you want in your gaming from over precision control your games to sharing …";

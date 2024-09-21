@@ -7,6 +7,7 @@ import 'package:urban_hamony/widgets/screens/homeScreen.dart';
 import 'package:urban_hamony/widgets/screens/productScreen.dart';
 import 'package:urban_hamony/widgets/screens/profileScreen.dart';
 import 'package:urban_hamony/widgets/screens/projectScreen.dart';
+import 'package:urban_hamony/widgets/screens/cart.dart';
 import '../providers/root.dart';
 
 class Layout extends StatefulWidget {
@@ -22,16 +23,18 @@ class _LayoutState extends State<Layout> {
     'Product',
     'Project',
     'Gallery',
-    'Profile'
+    'Profile',
+    'Cart'
   ], [
     const HomeScreen(),
     const ProductScreen(),
     const ProjectScreen(),
     const GalleryScreen(),
-    const ProfileScreen()
+    const ProfileScreen(),
+    const CartScreen()
   ]);
 
-  final List<String> screenNames = ['Home', 'Product', 'Project', 'Gallery', 'Profile'];
+  final List<String> screenNames = ['Home', 'Product', 'Project', 'Gallery', 'Profile','Cart'];
 
   final _navBarItems = [
     SalomonBottomBarItem(
@@ -58,6 +61,11 @@ class _LayoutState extends State<Layout> {
       icon: const Icon(Icons.person),
       title: const Text("Profile"),
       selectedColor: Colors.green,
+    ),
+    SalomonBottomBarItem(
+      icon: const Icon(Icons.shopping_cart),
+      title: const Text("Cart"),
+      selectedColor: Colors.blueAccent,
     ),
   ];
 

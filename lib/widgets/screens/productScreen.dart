@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-
-// TODO: add flutter_svg to pubspec.yaml
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:urban_hamony/widgets/screens/detailScreen.dart';
-
 import '../../models/product.dart';
 
 class ProductScreen extends StatelessWidget {
-  static String routeName = "/test";
 
   const ProductScreen({super.key});
 
@@ -51,9 +47,14 @@ class HomeHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const SizedBox(width: 16),
+          const Text(
+            "Products",
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           IconBtnWithCounter(
-            // numOfitem: 3,
             svgSrc: cartIcon,
             press: () {},
           ),
@@ -119,43 +120,6 @@ class IconBtnWithCounter extends StatelessWidget {
               ),
             )
         ],
-      ),
-    );
-  }
-}
-
-class DiscountBanner extends StatelessWidget {
-  const DiscountBanner({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 16,
-      ),
-      decoration: BoxDecoration(
-        color: const Color(0xFF4A3298),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: const Text.rich(
-        TextSpan(
-          style: TextStyle(color: Colors.white),
-          children: [
-            TextSpan(text: "A Summer Surpise\n"),
-            TextSpan(
-              text: "Cashback 20%",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
