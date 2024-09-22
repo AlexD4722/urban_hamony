@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:urban_hamony/models/product_model.dart';
 import '../../models/product.dart';
 import '../../providers/cartProvider.dart';
 import 'checkoutScreen.dart';
@@ -17,7 +18,8 @@ class _CartScreenState extends State<CartScreen> {
     double total = 0;
     final cartProvider = Provider.of<CartProvider>(context);
     for (var cart in cartProvider.demoCarts) {
-      total += cart.product.price * cart.numOfItem;
+      double? price = cart.product.price is String ? double.tryParse(cart.product.price as String) ?? 0.0 : cart.product.price;
+      total += (price! * cart.numOfItem)!;
     }
     print("===================Total: $total");
     return total;
@@ -55,7 +57,7 @@ class _CartScreenState extends State<CartScreen> {
                 itemBuilder: (context, index) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Dismissible(
-                    key: Key(cartProvider.demoCarts[index].product.id.toString()),
+                    key: Key(cartProvider.demoCarts[index].product.code.toString()),
                     direction: DismissDirection.endToStart,
                     onDismissed: (direction) {
                       cartProvider.removeCart(index);
@@ -107,7 +109,7 @@ class CartCard extends StatelessWidget {
                 color: const Color(0xFFF5F6F9),
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: Image.network(cart.product.images[0]),
+              child: Image.network(cart.product.urlImages[0] ?? ""),
             ),
           ),
         ),
@@ -116,7 +118,7 @@ class CartCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              cart.product.title,
+              cart.product.name ?? "",
               style: const TextStyle(color: Colors.black, fontSize: 16),
               maxLines: 2,
             ),
@@ -236,7 +238,7 @@ class CheckoutCard extends StatelessWidget {
 }
 
 class Cart {
-  final Product product;
+  final ProductModel product;
   final int numOfItem;
 
   Cart({required this.product, required this.numOfItem});

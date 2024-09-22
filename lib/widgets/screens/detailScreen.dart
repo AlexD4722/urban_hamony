@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:urban_hamony/models/product_model.dart';
 import 'package:urban_hamony/widgets/screens/cart.dart';
 import '../../models/product.dart';
 import '../../providers/cartProvider.dart';
@@ -8,7 +9,7 @@ import '../components/QuantitySelector.dart';
 import 'cartEmpty.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
-  final Product product;
+  final ProductModel product;
 
   const ProductDetailsScreen({super.key, required this.product});
 
@@ -22,7 +23,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void addToCart() {
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
     final existingCartIndex = cartProvider.demoCarts
-        .indexWhere((cart) => cart.product.id == widget.product.id);
+        .indexWhere((cart) => cart.product.code == widget.product.code);
 
     if (existingCartIndex != -1) {
       // Product already in cart, increase quantity
@@ -240,7 +241,7 @@ class ProductImages extends StatefulWidget {
     required this.product,
   }) : super(key: key);
 
-  final Product product;
+  final ProductModel product;
 
   @override
   _ProductImagesState createState() => _ProductImagesState();
@@ -257,14 +258,14 @@ class _ProductImagesState extends State<ProductImages> {
           width: 238,
           child: AspectRatio(
             aspectRatio: 1,
-            child: Image.network(widget.product.images[selectedImage]),
+            child: Image.network(widget.product.urlImages[selectedImage]!),
           ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ...List.generate(
-              widget.product.images.length,
+              widget.product.urlImages.length,
                   (index) =>
                   SmallProductImage(
                     isSelected: index == selectedImage,
@@ -273,7 +274,7 @@ class _ProductImagesState extends State<ProductImages> {
                         selectedImage = index;
                       });
                     },
-                    image: widget.product.images[index],
+                    image: widget.product.urlImages[index] ?? "",
                   ),
             ),
           ],
@@ -331,7 +332,7 @@ class ProductDescription extends StatelessWidget {
     this.pressOnSeeMore,
   }) : super(key: key);
 
-  final Product product;
+  final ProductModel product;
   final GestureTapCallback? pressOnSeeMore;
 
   @override
@@ -342,7 +343,7 @@ class ProductDescription extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
-            product.title,
+            product.name ?? "",
             style: Theme
                 .of(context)
                 .textTheme
@@ -355,7 +356,7 @@ class ProductDescription extends StatelessWidget {
             right: 64,
           ),
           child: Text(
-            product.description,
+            product.description ?? "",
             maxLines: 5,
           ),
         ),
@@ -396,7 +397,7 @@ class ColorDots extends StatelessWidget {
     required this.product,
   }) : super(key: key);
 
-  final Product product;
+  final ProductModel product;
 
   @override
   Widget build(BuildContext context) {

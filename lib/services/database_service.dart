@@ -152,7 +152,7 @@ class DatabaseService {
     }
   }
 
-  Future<bool> addProduct(String name, String code, String price, String quantity, String category, String description, List<String?> urlImages) async {
+  Future<bool> addProduct(String name, String code, double price, int quantity, String category, String description, List<String?> urlImages) async {
     ProductModel data = ProductModel(
       name: name,
       code: code,

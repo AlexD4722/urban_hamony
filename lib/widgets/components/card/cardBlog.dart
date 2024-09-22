@@ -30,12 +30,34 @@ class CardBlog extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              child: Image.asset(
-                "assets/images/$imageUrl",
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+                child: Image.network(
+                  imageUrl,
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                              : null,
+                        ),
+                      );
+                    }
+                  },
+                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                    return const Center(
+                      child: Icon(
+                        Icons.error,
+                        color: Colors.red,
+                        size: 50,
+                      ),
+                    );
+                  },
+                ),
             ),
             Padding(
               padding: const EdgeInsets.all(16),

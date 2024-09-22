@@ -267,8 +267,8 @@ class _AddProductPageState extends State<AddProductPage> {
           await _databaseService.addProduct(
               _nameController.text,
               _codeController.text,
-              _priceController.text,
-              _quantityController.text,
+              _priceController.text as double,
+              _quantityController.text as int,
               _categoryController.text,
               _descriptionController.text,
               uploadImages

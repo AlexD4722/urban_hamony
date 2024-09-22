@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import '../../models/blog_model.dart';
+import '../../services/database_service.dart';
 import '../components/card/cardBlog.dart';
 import '../components/card/cardProject.dart';
 import 'drawScreen.dart';
@@ -9,6 +11,20 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DatabaseService _databaseService = DatabaseService();
+    List<BlogModel> _generateBlogsList(List<BlogModel> blog){
+      List<BlogModel> blogs = blog.map((c) {
+        return BlogModel(
+          id: c.id,
+          status: c.status,
+          description: c.description,
+          category: c.category,
+          image: c.image,
+          title: c.title,
+        );
+      }).toList();
+      return blogs;
+    }
     final List<Map<String, String>> projects = [
       {
         'title': 'Project 1',
@@ -45,45 +61,6 @@ class HomeScreen extends StatelessWidget {
         'description': 'Description 3',
         'imageUrl': 'demo.jpg'
       },
-    ];
-    final List<Map<String, String>> blogs = [
-      {
-        'imageUrl': 'blogDemo.jpg',
-        'title': 'Flutter Tips and Tricks',
-        'description':
-            'Learn some advanced Flutter techniques to improve your app development skills.',
-      },
-      {
-        'imageUrl': 'blogDemo.jpg',
-        'title': 'Dart 3.0: What\'s New',
-        'description':
-            'Explore the latest features and improvements in Dart 3.0.',
-      },
-      {
-        'imageUrl': 'blogDemo.jpg',
-        'title': 'Dart 3.0: What\'s New',
-        'description':
-            'Explore the latest features and improvements in Dart 3.0.',
-      },
-      {
-        'imageUrl': 'blogDemo.jpg',
-        'title': 'Dart 3.0: What\'s New',
-        'description':
-            'Explore the latest features and improvements in Dart 3.0.',
-      },
-      {
-        'imageUrl': 'blogDemo.jpg',
-        'title': 'Dart 3.0: What\'s New',
-        'description':
-            'Explore the latest features and improvements in Dart 3.0.',
-      },
-      {
-        'imageUrl': 'blogDemo.jpg',
-        'title': 'Dart 3.0: What\'s New',
-        'description':
-            'Explore the latest features and improvements in Dart 3.0.',
-      },
-      // Add more blog entries as needed
     ];
     return CustomScrollView(
       slivers: [
@@ -141,37 +118,50 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    height: 320, // Adjust this height as needed
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: blogs.length + 1, // Increase itemCount by 1
-                      itemBuilder: (context, index) {
-                        if (index == blogs.length) {
-                          // "Show More" widget at the end of the list
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 8, right: 8),
-                            child: SizedBox(
-                              width: 280, // Same width as blog cards
-                              child: _showMoreBlogs(),
-                            ),
-                          );
-                        } else {
-                          final blog = blogs[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 0, right: 8),
-                            child: SizedBox(
-                              width: 280, // Adjust this width as needed
-                              child: CardBlog(
-                                imageUrl: blog['imageUrl']!,
-                                title: blog['title']!,
-                                description: blog['description']!,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
+                  StreamBuilder(
+                    stream: _databaseService.getBlogCollection(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<BlogModel> data = snapshot.data!;
+                        List<BlogModel> blogs = _generateBlogsList(data);
+                        return SizedBox(
+                          height: 320, // Adjust this height as needed
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: blogs.length + 1, // Increase itemCount by 1
+                            itemBuilder: (context, index) {
+                              if (index == blogs.length) {
+                                // "Show More" widget at the end of the list
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 8, right: 8),
+                                  child: SizedBox(
+                                    width: 280, // Same width as blog cards
+                                    child: _showMoreBlogs(),
+                                  ),
+                                );
+                              } else {
+                                final blog = blogs[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 0, right: 8),
+                                  child: SizedBox(
+                                    width: 280, // Adjust this width as needed
+                                    child: CardBlog(
+                                      imageUrl: blog.image ?? "",
+                                      title: blog.title ?? "",
+                                      description: blog.description ?? "",
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        );
+                      }else{
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -183,37 +173,50 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    height: 320, // Adjust this height as needed
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: blogs.length + 1, // Increase itemCount by 1
-                      itemBuilder: (context, index) {
-                        if (index == blogs.length) {
-                          // "Show More" widget at the end of the list
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 8, right: 8),
-                            child: SizedBox(
-                              width: 280, // Same width as blog cards
-                              child: _showMoreBlogs(),
-                            ),
-                          );
-                        } else {
-                          final blog = blogs[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 0, right: 8),
-                            child: SizedBox(
-                              width: 280, // Adjust this width as needed
-                              child: CardBlog(
-                                imageUrl: blog['imageUrl']!,
-                                title: blog['title']!,
-                                description: blog['description']!,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
+                  StreamBuilder(
+                    stream: _databaseService.getBlogCollection(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<BlogModel> data = snapshot.data!;
+                        List<BlogModel> blogs = _generateBlogsList(data);
+                        return SizedBox(
+                          height: 320, // Adjust this height as needed
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: blogs.length + 1, // Increase itemCount by 1
+                            itemBuilder: (context, index) {
+                              if (index == blogs.length) {
+                                // "Show More" widget at the end of the list
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 8, right: 8),
+                                  child: SizedBox(
+                                    width: 280, // Same width as blog cards
+                                    child: _showMoreBlogs(),
+                                  ),
+                                );
+                              } else {
+                                final blog = blogs[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 0, right: 8),
+                                  child: SizedBox(
+                                    width: 280, // Adjust this width as needed
+                                    child: CardBlog(
+                                      imageUrl: blog.image ?? "",
+                                      title: blog.title ?? "",
+                                      description: blog.description ?? "",
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        );
+                      }else{
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
                   ),
                 ],
               ),

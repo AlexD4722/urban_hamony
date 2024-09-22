@@ -34,56 +34,13 @@ class _ProductScreenState extends State<ProductScreen> {
     }).toList();
     return products;
   }
-  List<Product> demoProducts = [
-    Product(
-      id: 1,
-      images: [
-        "https://i.postimg.cc/c19zpJ6f/Image-Popular-Product-1.png",
-        "https://i.postimg.cc/zBLc7fcF/ps4-console-white-2.png",
-        "https://i.postimg.cc/KYpWtTJY/ps4-console-white-3.png",
-        "https://i.postimg.cc/YSCV4RNV/ps4-console-white-4.png"
-      ],
-      title: "Wireless Controller for PS4™",
-      price: 64.99,
-      description: "Wireless Controller for PS4™ gives you what you want in your gaming from over precision control your games to sharing …",
-      quantity: 100,
-      category: "table",
-    ),
-    Product(
-      id: 1,
-      images: [
-        "https://i.postimg.cc/c19zpJ6f/Image-Popular-Product-1.png",
-        "https://i.postimg.cc/zBLc7fcF/ps4-console-white-2.png",
-        "https://i.postimg.cc/KYpWtTJY/ps4-console-white-3.png",
-        "https://i.postimg.cc/YSCV4RNV/ps4-console-white-4.png"
-      ],
-      title: "Wireless Controller for PS4™",
-      price: 64.99,
-      description: "Wireless Controller for PS4™ gives you what you want in your gaming from over precision control your games to sharing …",
-      quantity: 100,
-      category: "chair",
-    ),
-    Product(
-      id: 1,
-      images: [
-        "https://i.postimg.cc/c19zpJ6f/Image-Popular-Product-1.png",
-        "https://i.postimg.cc/zBLc7fcF/ps4-console-white-2.png",
-        "https://i.postimg.cc/KYpWtTJY/ps4-console-white-3.png",
-        "https://i.postimg.cc/YSCV4RNV/ps4-console-white-4.png"
-      ],
-      title: "Wireless Controller for PS4™",
-      price: 64.99,
-      description: "Wireless Controller for PS4™ gives you what you want in your gaming from over precision control your games to sharing …",
-      quantity: 100,
-      category: "door",
-    ),
-  ];
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
-      body: StreamBuilder(
+      body: StreamBuilder<List<ProductModel>>(
         stream: _databaseService.getProductCollection(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -91,39 +48,40 @@ class _ProductScreenState extends State<ProductScreen> {
               child: CircularProgressIndicator(),
             );
           }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const Center(
+              child: Text('No data available'),
+            );
+          }
           final List<ProductModel> data = snapshot.data!;
-          List<ProductModel> products = _generateProductsList(
-              data
-          );
+          List<ProductModel> demoProducts = _generateProductsList(data);
           return SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(vertical: 16),
               child: Column(
                 children: [
                   const HomeHeader(),
-                  TableProducts(listProduct: demoProducts.where((product) => product
-                      .category == "table").toList()),
+                  TableProducts(listProduct: demoProducts.where((product) => product.category == "table").toList()),
                   SizedBox(height: 20),
-                  ChairProducts(listProduct: demoProducts.where((product) => product
-                      .category == "chair").toList()),
+                  ChairProducts(listProduct: demoProducts.where((product) => product.category == "chair").toList()),
                   SizedBox(height: 20),
-                  DoorProducts(listProduct: demoProducts.where((product) => product
-                      .category == "door").toList()),
+                  DoorProducts(listProduct: demoProducts.where((product) => product.category == "door").toList()),
                   SizedBox(height: 20),
-                  WindowProducts(
-                      listProduct: demoProducts.where((product) => product
-                          .category == "window").toList()),
+                  WindowProducts(listProduct: demoProducts.where((product) => product.category == "window").toList()),
                   SizedBox(height: 20),
-                  BedProducts(listProduct: demoProducts.where((product) => product
-                      .category == "bed").toList()),
+                  BedProducts(listProduct: demoProducts.where((product) => product.category == "bed").toList()),
                   SizedBox(height: 20),
-                  TreeProducts(listProduct: demoProducts.where((product) => product
-                      .category == "tree").toList()),
+                  TreeProducts(listProduct: demoProducts.where((product) => product.category == "tree").toList()),
                 ],
               ),
             ),
           );
-        }
+        },
       ),
     );
   }
@@ -131,7 +89,7 @@ class _ProductScreenState extends State<ProductScreen> {
 }
 
 class TableProducts extends StatelessWidget {
-  final List<Product> listProduct;
+  final List<ProductModel> listProduct;
   const TableProducts({super.key, required this.listProduct});
 
   @override
@@ -172,7 +130,7 @@ class TableProducts extends StatelessWidget {
 }
 
 class ChairProducts extends StatelessWidget {
-  final List<Product> listProduct;
+  final List<ProductModel> listProduct;
 
   const ChairProducts({super.key, required this.listProduct});
 
@@ -214,7 +172,7 @@ class ChairProducts extends StatelessWidget {
 }
 
 class DoorProducts extends StatelessWidget {
-  final List<Product> listProduct;
+  final List<ProductModel> listProduct;
 
   const DoorProducts({super.key, required this.listProduct});
 
@@ -256,7 +214,7 @@ class DoorProducts extends StatelessWidget {
 }
 
 class WindowProducts extends StatelessWidget {
-  final List<Product> listProduct;
+  final List<ProductModel> listProduct;
   const WindowProducts({super.key, required this.listProduct});
   @override
   Widget build(BuildContext context) {
@@ -296,7 +254,7 @@ class WindowProducts extends StatelessWidget {
 }
 
 class BedProducts extends StatelessWidget {
-  final List<Product> listProduct;
+  final List<ProductModel> listProduct;
   const BedProducts({super.key, required this.listProduct});
 
   @override
@@ -337,7 +295,7 @@ class BedProducts extends StatelessWidget {
 }
 
 class TreeProducts extends StatelessWidget {
-  final List<Product> listProduct;
+  final List<ProductModel> listProduct;
   const TreeProducts({super.key, required this.listProduct});
 
   @override
@@ -571,7 +529,7 @@ class ProductCard extends StatelessWidget {
   }) : super(key: key);
 
   final double width, aspectRetio;
-  final Product product;
+  final ProductModel product;
 
   @override
   Widget build(BuildContext context) {
@@ -595,7 +553,7 @@ class ProductCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: CachedNetworkImage(
-                  imageUrl: product.images[0],
+                  imageUrl: product.urlImages[0] ?? "",
                   placeholder: (context, url) => CircularProgressIndicator(),
                   errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
@@ -603,7 +561,7 @@ class ProductCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              product.title,
+              product.name ?? "",
               style: Theme
                   .of(context)
                   .textTheme

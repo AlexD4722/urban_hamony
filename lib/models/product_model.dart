@@ -2,8 +2,8 @@ class ProductModel {
   late List<String?> urlImages;
   String? name;
   String? code;
-  String? quantity;
-  String? price;
+  int? quantity;
+  double? price;
   String? category;
   String? description;
   String? status;
@@ -20,7 +20,6 @@ class ProductModel {
   });
 
   ProductModel.fromJson(Map<String, dynamic> json) {
-
     if (json['urlImages'] is String) {
       urlImages = (json['urlImages'] as String).split(',').map((e) => e.trim()).toList();
     } else if (json['urlImages'] is List) {
@@ -30,8 +29,8 @@ class ProductModel {
     }
     name = json['name'];
     code = json['code'];
-    quantity = json['quantity'];
-    price = json['price'];
+    quantity = json['quantity'] is String ? int.tryParse(json['quantity']) ?? 0 : json['quantity'];
+    price = json['price'] is String ? double.tryParse(json['price']) ?? 0.0 : json['price'];
     category = json['category'];
     description = json['description'];
     status = json['status'];
@@ -42,8 +41,8 @@ class ProductModel {
     data['urlImages'] = this.urlImages;
     data['name'] = this.name;
     data['code'] = this.code;
-    data['quantity'] = this.quantity;
-    data['price'] = this.price;
+    data['quantity'] = this.quantity.toString();
+    data['price'] = this.price.toString();
     data['category'] = this.category;
     data['description'] = this.description;
     data['status'] = this.status;

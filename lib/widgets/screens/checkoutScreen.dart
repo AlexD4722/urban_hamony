@@ -257,13 +257,13 @@ class CartSummary extends StatelessWidget {
                 return Row(
                   children: [
                     Image.network(
-                      cart.product.images[0],
+                      cart.product.urlImages[0] ?? "",
                       width: 50,
                       height: 50,
                       fit: BoxFit.cover,
                     ),
                     const SizedBox(width: 10),
-                    Text("${cart.product.title} x ${cart.numOfItem}"),
+                    Text("${cart.product.name} x ${cart.numOfItem}"),
                   ],
                 );
               }).toList(),
