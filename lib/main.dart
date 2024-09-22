@@ -17,5 +17,5 @@ void main() async {
   FlutterNativeSplash.remove();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => RootProvider()),
-  ], child: const Application()));
+  ], child: Application()));
 }

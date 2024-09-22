@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:urban_hamony/services/database_service.dart';
 import 'package:urban_hamony/widgets/screens/chooseRole.dart';
 import 'package:urban_hamony/widgets/signup.dart';
@@ -22,6 +25,12 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   DatabaseService _databaseService = DatabaseService();
+
+  Future<void> saveCurrentUser(currentUser) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = jsonEncode(currentUser);
+    prefs.setString('currentUser', jsonString);
+  }
 
   Widget _backButton() {
     return InkWell(
@@ -76,6 +85,7 @@ class _LoginPageState extends State<LoginPage> {
         final currentUser = await _databaseService.login(
             _emailController.text, _passwordController.text);
         if(currentUser?.isHasProfile == true){
+          saveCurrentUser(currentUser);
           if(currentUser?.role != 'admin'){
             Navigator.pushReplacement(
               context,
@@ -174,6 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                   )),
             );
           } else {
+            saveCurrentUser(user);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => Layout()),);

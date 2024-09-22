@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:urban_hamony/widgets/screens/galleryScreen.dart';
 import 'package:urban_hamony/widgets/screens/homeScreen.dart';
+import 'package:urban_hamony/widgets/screens/profileScreen.dart';
 import 'package:urban_hamony/widgets/screens/projectScreen.dart';
 import '../providers/root.dart';
 import 'dart:math' as math;
@@ -26,7 +27,7 @@ class _LayoutState extends State<Layout> {
     const HomeScreen(),
     const ProjectScreen(),
     const GalleryScreen(),
-    const ProjectScreen()
+    const ProfileScreen()
   ]);
   final List<String> screenNames = ['Home', 'Project', 'Gallery', 'Profile'];
   final _navBarItems = [
