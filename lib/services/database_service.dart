@@ -1,10 +1,15 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:urban_hamony/models/auth_model.dart';
+import 'package:urban_hamony/models/product_model.dart';
+
+import '../models/blog_model.dart';
 
 class DatabaseService {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   CollectionReference? _usersCollection;
+  CollectionReference? _productsCollection;
+  CollectionReference? _blogsCollection;
 
   void _setupCollectionReferences() {
     _usersCollection = _firebaseFirestore
@@ -12,6 +17,18 @@ class DatabaseService {
         .withConverter<UserModel>(
         fromFirestore: (snapshot, _) =>
             UserModel.fromJson(snapshot.data()!),
+        toFirestore: (chat, _) => chat.toJson());
+    _productsCollection = _firebaseFirestore
+        .collection('products')
+        .withConverter<ProductModel>(
+        fromFirestore: (snapshot, _) =>
+            ProductModel.fromJson(snapshot.data()!),
+        toFirestore: (chat, _) => chat.toJson());
+    _blogsCollection = _firebaseFirestore
+        .collection('blogs')
+        .withConverter<BlogModel>(
+        fromFirestore: (snapshot, _) =>
+            BlogModel.fromJson(snapshot.data()!),
         toFirestore: (chat, _) => chat.toJson());
   }
 
@@ -33,6 +50,26 @@ class DatabaseService {
       return false;
     }
   }
+
+  Future<bool> checkProductExist(String code) async {
+    try{
+      QuerySnapshot querySnapshot = await _usersCollection!
+          .where('code', isEqualTo: code)
+          .get();
+      if (querySnapshot.docs.isNotEmpty) {
+        QueryDocumentSnapshot doc = querySnapshot.docs.first;
+        ProductModel data = doc.data() as ProductModel;
+        ProductModel product = ProductModel.fromJson(data.toJson());
+        if(product.code == code){
+          return true;
+        }
+      }
+      return false;
+    } catch(e){
+      return false;
+    }
+  }
+
 
   Future<UserModel?> login(String email, String password) async {
     if (_usersCollection == null) {
@@ -68,6 +105,58 @@ class DatabaseService {
     } catch (e) {
       print("Lỗi: $e");
       return null;
+    }
+  }
+
+  // Future<bool> addBlog(String id, String title, String image, String category, String description, String status) async {
+  //   BlogModel data = BlogModel(
+  //     // id: ,
+  //     // title: ,
+  //     // image: ,
+  //     // category: ,
+  //     // description: ,
+  //     // status: ,
+  //   );
+  //   print(data);
+  //   if (_productsCollection == null) {
+  //     _setupCollectionReferences();
+  //   }
+  //   try {
+  //     final querry = await checkProductExist(code);
+  //     if(querry){
+  //       return false;
+  //     }
+  //     await _productsCollection?.add(data);
+  //     return true;
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // }
+
+  Future<bool> addProduct(String name, String code, String price, String quantity, String category, String description, List<String?> urlImages) async {
+    ProductModel data = ProductModel(
+      name: name,
+      code: code,
+      price: price,
+      quantity: quantity,
+      category: category,
+      description: description,
+      urlImages: urlImages,
+      status: '1',
+    );
+    print(data);
+    if (_productsCollection == null) {
+      _setupCollectionReferences();
+    }
+    try {
+      final querry = await checkProductExist(code);
+      if(querry){
+        return false;
+      }
+      await _productsCollection?.add(data);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
@@ -125,6 +214,16 @@ class DatabaseService {
       print(e);
       return false;
     }
+  }
+
+  Stream<List<ProductModel>> getProductCollection() {
+    CollectionReference products = FirebaseFirestore.instance.collection('products');
+
+    return products.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return ProductModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
   }
 
   // Future<bool> checkChatRoomExists(String uid1, String uid2) async {

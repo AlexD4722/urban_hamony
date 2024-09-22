@@ -17,4 +17,27 @@ class StorageService {
         }
       });
     }
+  Future<List<String?>> uploadProductImages({
+    required List<File> files,
+    required String code,
+  }) async {
+    List<Future<String?>> uploadTasks = files.asMap().entries.map((entry) async {
+      int index = entry.key;
+      File file = entry.value;
+      print('-----------$index');
+      Reference fileRef = _firebaseStorage
+          .ref('products/imgp')
+          .child('$code-$index${p.extension(file.path)}');
+      UploadTask task = fileRef.putFile(file);
+      TaskSnapshot snapshot = await task;
+      if (snapshot.state == TaskState.success) {
+        return await fileRef.getDownloadURL();
+      } else {
+        return null;
+      }
+    }).toList();
+
+    print(uploadTasks);
+    return Future.wait(uploadTasks);
+  }
 }
