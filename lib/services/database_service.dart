@@ -51,9 +51,28 @@ class DatabaseService {
     }
   }
 
+  Future<bool> checkBlogExist(String code) async {
+    try{
+      QuerySnapshot querySnapshot = await _blogsCollection!
+          .where('id', isEqualTo: code)
+          .get();
+      if (querySnapshot.docs.isNotEmpty) {
+        QueryDocumentSnapshot doc = querySnapshot.docs.first;
+        BlogModel data = doc.data() as BlogModel;
+        BlogModel blog = BlogModel.fromJson(data.toJson());
+        if(blog.id == code){
+          return true;
+        }
+      }
+      return false;
+    } catch(e){
+      return false;
+    }
+  }
+
   Future<bool> checkProductExist(String code) async {
     try{
-      QuerySnapshot querySnapshot = await _usersCollection!
+      QuerySnapshot querySnapshot = await _productsCollection!
           .where('code', isEqualTo: code)
           .get();
       if (querySnapshot.docs.isNotEmpty) {
@@ -108,30 +127,30 @@ class DatabaseService {
     }
   }
 
-  // Future<bool> addBlog(String id, String title, String image, String category, String description, String status) async {
-  //   BlogModel data = BlogModel(
-  //     // id: ,
-  //     // title: ,
-  //     // image: ,
-  //     // category: ,
-  //     // description: ,
-  //     // status: ,
-  //   );
-  //   print(data);
-  //   if (_productsCollection == null) {
-  //     _setupCollectionReferences();
-  //   }
-  //   try {
-  //     final querry = await checkProductExist(code);
-  //     if(querry){
-  //       return false;
-  //     }
-  //     await _productsCollection?.add(data);
-  //     return true;
-  //   } catch (e) {
-  //     return false;
-  //   }
-  // }
+  Future<bool> addBlog(String id, String title, String image, String category, String description) async {
+    BlogModel data = BlogModel(
+      id: id,
+      title: title,
+      image: image,
+      category: category,
+      description: description,
+      status: '1'
+    );
+    if (_blogsCollection == null) {
+      _setupCollectionReferences();
+    }
+    try {
+      final querry = await checkBlogExist(id);
+      print(querry);
+      if(querry){
+        return false;
+      }
+      await _blogsCollection?.add(data);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
   Future<bool> addProduct(String name, String code, String price, String quantity, String category, String description, List<String?> urlImages) async {
     ProductModel data = ProductModel(
@@ -144,7 +163,7 @@ class DatabaseService {
       urlImages: urlImages,
       status: '1',
     );
-    print(data);
+    print(data.description);
     if (_productsCollection == null) {
       _setupCollectionReferences();
     }
@@ -218,7 +237,6 @@ class DatabaseService {
 
   Stream<List<ProductModel>> getProductCollection() {
     CollectionReference products = FirebaseFirestore.instance.collection('products');
-
     return products.snapshots().map((querySnapshot) {
       return querySnapshot.docs.map((doc) {
         return ProductModel.fromJson(doc.data() as Map<String, dynamic>);
@@ -226,147 +244,14 @@ class DatabaseService {
     });
   }
 
-  // Future<bool> checkChatRoomExists(String uid1, String uid2) async {
-  //   String chatID = generateChatID(uid1: uid1, uid2: uid2);
-  //   final result = await _chatsCollection?.doc(chatID).get();
-  //   if (result != null) {
-  //     return result.exists;
-  //   }
-  //   return false;
-  // }
-
-  // Future<void> createChatRoom(NotificationModel data) async {
-  //   print(data.id);
-  //   String chatID = generateChatID(uid1: data.receiverId.toString(), uid2: data.senderId.toString());
-  //   if (_chatsCollection == null) {
-  //     _setupCollectionReferences();
-  //   }
-  //   final docRef = _chatsCollection!.doc(chatID);
-  //   List<Participants> participants = [
-  //     Participants(
-  //         fullname: data.senderName,
-  //         id: data.senderId.toString(),
-  //         images: data.senderImage
-  //     ),
-  //     Participants(
-  //         fullname: data.receiverName,
-  //         id: data.receiverId.toString(),
-  //         images: data.receiverImage
-  //     ),
-  //
-  //   ];
-  //   final chat = ChatRoomModel(
-  //       id: data.idMatching2.toString(),
-  //       participants: participants,
-  //       newMessage: [],
-  //       messages: [],
-  //       contain: [data.senderId.toString(),data.receiverId.toString()]
-  //   );
-  //   print(chat);
-  //   await docRef.set(chat);
-  // }
-
-  // String generateChatID({required String uid1, required String uid2}) {
-  //   List uids = [uid1, uid2];
-  //   uids.sort();
-  //   String chatID = uids.fold("", (id, uid) => "$id$uid");
-  //   return chatID;
-  // }
-
-  // Future<void> sendChatMessage(String uid1, String uid2,
-  //     Message message) async {
-  //   String chatID = generateChatID(uid1: uid1, uid2: uid2);
-  //   // if (_chatsCollection == null) {
-  //   //   await _setupCollectionReferences();
-  //   // }
-  //   final docRef = await _chatsCollection!.doc(chatID);
-  //   await docRef.update({
-  //     'messages': FieldValue.arrayUnion(
-  //       [
-  //         message.toJson(),
-  //       ],
-  //     ),
-  //     'newMessage': [message.toJson()],
-  //   });
-  // }
-
-  // Future<void> updateStatus(String uid1, String uid2) async {
-  //   String chatID = generateChatID(uid1: uid1, uid2: uid2);
-  //   if (_chatsCollection == null) {
-  //     _setupCollectionReferences();
-  //   }
-  //   final docRef = await _chatsCollection!.doc(chatID);
-  //   final docSnapshot = await docRef.get();
-  //   if (docSnapshot.exists) {
-  //     List<dynamic> messages = docSnapshot.get('messages');
-  //     List<dynamic> newMessages = docSnapshot.get('newMessage');
-  //
-  //     // Update the 'seen' field for messages sent by the user with senderID == uid2
-  //     List<Map<String, dynamic>> updatedNewMessages = newMessages.map((nmsg) {
-  //       if (nmsg is Map<String, dynamic>) {
-  //         if (nmsg['senderID'] == uid2) {
-  //           nmsg['seen'] = true;
-  //         }
-  //         return nmsg;
-  //       }
-  //       return nmsg as Map<String, dynamic>;
-  //     }).toList();
-  //
-  //     List<Map<String, dynamic>> updatedMessages = messages.map((msg) {
-  //       if (msg is Map<String, dynamic>) {
-  //         if (msg['senderID'] == uid2) {
-  //           msg['seen'] = true;
-  //         }
-  //         return msg;
-  //       }
-  //       return msg as Map<String, dynamic>;
-  //     }).toList();
-  //     await docRef.update({
-  //       'messages': updatedMessages,
-  //       'newMessage': updatedNewMessages,
-  //     });
-  //   }
-  // }
-
-  // Stream getChatData(String uid1, String uid2) {
-  //   String chatID = generateChatID(uid1: uid1, uid2: uid2);
-  //   if (_chatsCollection == null) {
-  //     _setupCollectionReferences();
-  //   }
-  //   return _chatsCollection!.doc(chatID).snapshots() as Stream<DocumentSnapshot<ChatRoomModel>>;
-  // }
+  Stream<List<BlogModel>> getBlogCollection() {
+    CollectionReference products = FirebaseFirestore.instance.collection('blogs');
+    return products.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        return BlogModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
 
 
-  // Stream getListChatRooms(String userId) {
-  //   if (_chatsCollection == null) {
-  //     _setupCollectionReferences();
-  //   }
-  //   return _chatsCollection!
-  //       .where('participants', arrayContains: userId)
-  //       .snapshots();
-  // }
-
-  // Stream<List<ChatRoomModel>> getListChatRooms(String userId) {
-  //   Stream<QuerySnapshot<Map<String, dynamic>>> querySnapshots = _firebaseFirestore.collection('chats')
-  //       .where('contain', arrayContains: userId)
-  //       .snapshots();
-  //   return querySnapshots.map((q) {
-  //     List<ChatRoomModel> chatboxes = q.docs.map((doc) {
-  //       return ChatRoomModel.fromJson(doc.data());
-  //     }).toList();
-  //
-  //     // Sắp xếp các chatboxes theo `sentAt` mới nhất trong `newMessage`
-  //     chatboxes.sort((a, b) {
-  //       Timestamp? sentAtA = a.newMessage != null && a.newMessage!.isNotEmpty
-  //           ? a.newMessage!.last.sentAt
-  //           : Timestamp.fromMillisecondsSinceEpoch(0);
-  //       Timestamp? sentAtB = b.newMessage != null && b.newMessage!.isNotEmpty
-  //           ? b.newMessage!.last.sentAt
-  //           : Timestamp.fromMillisecondsSinceEpoch(0);
-  //
-  //       return sentAtB!.compareTo(sentAtA!); // Sắp xếp giảm dần theo thời gian
-  //     });
-  //     return chatboxes;
-  //   });
-  // }
 }

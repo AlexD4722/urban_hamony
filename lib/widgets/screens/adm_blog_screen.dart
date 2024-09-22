@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:urban_hamony/models/blog_model.dart';
 import 'package:urban_hamony/models/product_model.dart';
 import 'package:urban_hamony/services/database_service.dart';
 import 'package:urban_hamony/widgets/screens/add_product_screen.dart';
+import 'package:urban_hamony/widgets/screens/blog_detail_screen.dart';
 import 'package:urban_hamony/widgets/screens/product_detail_screen.dart';
+
+import 'add_blog_screen.dart';
 
 class BlogListPage extends StatefulWidget {
   const BlogListPage({Key? key}) : super(key: key);
@@ -15,26 +19,24 @@ class BlogListPage extends StatefulWidget {
 
 class _BlogListPageState extends State<BlogListPage> {
   DatabaseService _databaseService = DatabaseService();
-  List<ProductModel> _generateProductsList(List<ProductModel> chats){
-    List<ProductModel> products = chats.map((c) {
-      return ProductModel(
-          name: c.name,
-          code: c.code,
-          price: c.price,
-          description: c.description,
-          status: c.status,
-          category: c.category,
-          quantity: c.quantity,
-          urlImages: c.urlImages
+  List<BlogModel> _generateBlogsList(List<BlogModel> blog){
+    List<BlogModel> blogs = blog.map((c) {
+      return BlogModel(
+        id: c.id,
+        status: c.status,
+        description: c.description,
+        category: c.category,
+        image: c.image,
+        title: c.title,
       );
     }).toList();
-    return products;
+    return blogs;
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text(
-        "Product List",
+        "Blog List",
         style: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.bold,
@@ -52,31 +54,31 @@ class _BlogListPageState extends State<BlogListPage> {
             iconSize: 40,
             onPressed: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => AddProductPage()));
+                  context, MaterialPageRoute(builder: (context) => AddBlogPage()));
             },
           ),
         ],
       ),
       body: StreamBuilder(
-          stream: _databaseService.getProductCollection(),
+          stream: _databaseService.getBlogCollection(),
           builder: (context, snapshot){
             if(snapshot.hasData){
-              List<ProductModel> data = snapshot.data!;
-              List<ProductModel> products = _generateProductsList(
+              List<BlogModel> data = snapshot.data!;
+              List<BlogModel> blogs = _generateBlogsList(
                   data
               );
               return Center(
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 500),
                   child: ListView.builder(
-                    itemCount: products.length,
+                    itemCount: blogs.length,
                     itemBuilder: (BuildContext context, int index) {
                       return InkWell(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => SecondPage(
+                              builder: (context) => BlogDetailPage(
                                 heroTag: index,
-                                product: products[index],
+                                blog: blogs[index],
                               )));
                         },
                         child: Padding(
@@ -92,7 +94,7 @@ class _BlogListPageState extends State<BlogListPage> {
                                       height: 100,
                                       child: Image.network(
                                         fit: BoxFit.cover,
-                                        products[index].urlImages[0]!,
+                                        blogs[index].image!,
                                       ),
                                     )
                                 ),
@@ -100,12 +102,12 @@ class _BlogListPageState extends State<BlogListPage> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: ListTile(// Icon đại diện cho sản phẩm
-                                  title: Text('Name: ${products[index].name}'),
+                                  title: Text('Title: ${blogs[index].title}'),
                                   subtitle: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Price: \$${products[index].price}'),
-                                      Text('Quantity: ${products[index].quantity}'),
+                                      Text('description: \$${blogs[index].description}'),
+                                      Text('Category: ${blogs[index].category}'),
                                     ],
                                   ),
                                 ),

@@ -40,4 +40,23 @@ class StorageService {
     print(uploadTasks);
     return Future.wait(uploadTasks);
   }
+
+  Future<String?> uploadBlogImage(File file, String code) async {
+    try {
+      Reference fileRef = FirebaseStorage.instance
+          .ref('blogs/imgb')
+          .child('$code${p.extension(file.path)}');
+      UploadTask uploadTask = fileRef.putFile(file);
+      TaskSnapshot snapshot = await uploadTask;
+      if (snapshot.state == TaskState.success) {
+        return await fileRef.getDownloadURL();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
 }
