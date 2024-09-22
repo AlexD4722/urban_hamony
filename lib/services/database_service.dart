@@ -111,25 +111,30 @@ class DatabaseService {
     }
   }
 
-  Future<bool> addBlog(String name, String code, String price, String quantity, String category, String description, List<String?> urlImages) async {
-    BlogModel data = BlogModel(
-
-    );
-    print(data);
-    if (_productsCollection == null) {
-      _setupCollectionReferences();
-    }
-    try {
-      final querry = await checkProductExist(code);
-      if(querry){
-        return false;
-      }
-      await _productsCollection?.add(data);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
+  // Future<bool> addBlog(String id, String title, String image, String category, String description, String status) async {
+  //   BlogModel data = BlogModel(
+  //     // id: ,
+  //     // title: ,
+  //     // image: ,
+  //     // category: ,
+  //     // description: ,
+  //     // status: ,
+  //   );
+  //   print(data);
+  //   if (_productsCollection == null) {
+  //     _setupCollectionReferences();
+  //   }
+  //   try {
+  //     final querry = await checkProductExist(code);
+  //     if(querry){
+  //       return false;
+  //     }
+  //     await _productsCollection?.add(data);
+  //     return true;
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // }
 
   Future<bool> addProduct(String name, String code, String price, String quantity, String category, String description, List<String?> urlImages) async {
     ProductModel data = ProductModel(
