@@ -76,10 +76,18 @@ class _LoginPageState extends State<LoginPage> {
         final currentUser = await _databaseService.login(
             _emailController.text, _passwordController.text);
         if(currentUser?.isHasProfile == true){
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => AdminPage()),
-          );
+          if(currentUser?.role != 'admin'){
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Layout()),
+            );
+          }else{
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => AdminPage()),
+            );
+          }
+
         } else {
           Navigator.pushReplacement(
             context,

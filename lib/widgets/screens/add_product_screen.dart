@@ -312,7 +312,6 @@ class _AddProductPageState extends State<AddProductPage> {
         _entryField("Price", _priceController),
         _entryField("Category", _categoryController),
         _entryField("Description", _descriptionController),
-
       ],
     );
   }
