@@ -1,7 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class CheckoutScreen extends StatelessWidget {
+import '../../providers/cartProvider.dart';
+
+class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
+
+  @override
+  _CheckoutScreenState createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
+  final _formKey = GlobalKey<FormState>();
+  bool _isFormValid = false;
+
+  void _validateForm() {
+    setState(() {
+      _isFormValid = _formKey.currentState?.validate() ?? false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -10,15 +27,14 @@ class CheckoutScreen extends StatelessWidget {
       appBar: AppBar(
         centerTitle: false,
         elevation: 0,
-        backgroundColor: const Color(0xFFFFFFFF),
-        foregroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-
         child: Column(
           children: [
             Form(
+              key: _formKey,
+              onChanged: _validateForm,
               child: Column(
                 children: [
                   UserInfoEditField(
@@ -27,7 +43,7 @@ class CheckoutScreen extends StatelessWidget {
                       initialValue: "Annette Black",
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: const Color(0xFF00BF6D).withOpacity(0.05),
+                        fillColor: const Color(0xfffbb448).withOpacity(0.05),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16.0 * 1.5, vertical: 16.0),
                         border: const OutlineInputBorder(
@@ -35,22 +51,12 @@ class CheckoutScreen extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(50)),
                         ),
                       ),
-                    ),
-                  ),
-                  UserInfoEditField(
-                    text: "Email",
-                    child: TextFormField(
-                      initialValue: "annette@gmail.com",
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: const Color(0xFF00BF6D).withOpacity(0.05),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16.0 * 1.5, vertical: 16.0),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                        ),
-                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your name';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   UserInfoEditField(
@@ -59,7 +65,7 @@ class CheckoutScreen extends StatelessWidget {
                       initialValue: "(316) 555-0116",
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: const Color(0xFF00BF6D).withOpacity(0.05),
+                        fillColor: const Color(0xfffbb448).withOpacity(0.05),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16.0 * 1.5, vertical: 16.0),
                         border: const OutlineInputBorder(
@@ -67,6 +73,12 @@ class CheckoutScreen extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(50)),
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your phone number';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   UserInfoEditField(
@@ -75,7 +87,7 @@ class CheckoutScreen extends StatelessWidget {
                       initialValue: "New York, NVC",
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: const Color(0xFF00BF6D).withOpacity(0.05),
+                        fillColor: const Color(0xfffbb448).withOpacity(0.05),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16.0 * 1.5, vertical: 16.0),
                         border: const OutlineInputBorder(
@@ -83,86 +95,49 @@ class CheckoutScreen extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(50)),
                         ),
                       ),
-                    ),
-                  ),
-                  UserInfoEditField(
-                    text: "Old Password",
-                    child: TextFormField(
-                      obscureText: true,
-                      initialValue: "demopass",
-                      decoration: InputDecoration(
-                        suffixIcon: const Icon(
-                          Icons.visibility_off,
-                          size: 20,
-                        ),
-                        filled: true,
-                        fillColor: const Color(0xFF00BF6D).withOpacity(0.05),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16.0 * 1.5, vertical: 16.0),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                        ),
-                      ),
-                    ),
-                  ),
-                  UserInfoEditField(
-                    text: "New Password",
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        hintText: "New Password",
-                        filled: true,
-                        fillColor: const Color(0xFF00BF6D).withOpacity(0.05),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16.0 * 1.5, vertical: 16.0),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                        ),
-                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your address';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 16.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  width: 120,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .color!
-                          .withOpacity(0.08),
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: const StadiumBorder(),
-                    ),
-                    child: const Text("Cancel"),
-                  ),
-                ),
-                const SizedBox(width: 16.0),
-                SizedBox(
-                  width: 160,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00BF6D),
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: const StadiumBorder(),
-                    ),
-                    onPressed: () {},
-                    child: const Text("Save Update"),
-                  ),
-                ),
-              ],
-            ),
+            const CartSummary(), // Add CartSummary widget here
           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          height: 80,
+          child: _isFormValid
+              ? InkWell(
+            onTap: () => {},
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              decoration: BoxDecoration(
+                color: const Color(0xfffbb448),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: const Center(
+                child: Text(
+                  "Payment Now",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          )
+              : null,
         ),
       ),
     );
@@ -190,7 +165,7 @@ class ProfilePic extends StatelessWidget {
         shape: BoxShape.circle,
         border: Border.all(
           color:
-          Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.08),
+              Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.08),
         ),
       ),
       child: Stack(
@@ -244,6 +219,58 @@ class UserInfoEditField extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+class CartSummary extends StatelessWidget {
+  const CartSummary({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<CartProvider>(
+      builder: (context, cartProvider, child) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Cart Summary",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              ...cartProvider.demoCarts.map((cart) {
+                return Row(
+                  children: [
+                    Image.network(
+                      cart.product.images[0],
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(width: 10),
+                    Text("${cart.product.title} x ${cart.numOfItem}"),
+                  ],
+                );
+              }).toList(),
+            ],
+          ),
+        );
+      },
     );
   }
 }

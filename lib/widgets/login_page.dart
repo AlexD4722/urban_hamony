@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:urban_hamony/services/database_service.dart';
 import 'package:urban_hamony/widgets/screens/chooseRole.dart';
 import 'package:urban_hamony/widgets/signup.dart';
-
-import '../models/auth_model.dart';
 import '../services/auth_google_service.dart';
 import 'components/bezierContainer.dart';
 import 'layout.dart';
@@ -20,8 +18,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _isFormValid = false;
   DatabaseService _databaseService = DatabaseService();
-
+  void _validateForm() {
+    setState(() {
+      _isFormValid = _formKey.currentState?.validate() ?? false;
+    });
+  }
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -57,35 +61,62 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 10,
           ),
-          TextField(
+          TextFormField(
               controller: controller,
               obscureText: isPassword,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: InputBorder.none,
                   fillColor: Color(0xfff3f3f4),
-                  filled: true))
+                  filled: true),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your $title';
+                }
+                if (title == "Email" && !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                  return 'Please enter a valid email address';
+                }
+                if (title == "Password" && value.length <= 5) {
+                  return 'Password must be greater than 5 characters';
+                }
+                return null;
+              }),
         ],
       ),
     );
   }
-
   Widget _submitButton() {
     return InkWell(
-      onTap: () async {
-        final currentUser = await _databaseService.login(
-            _emailController.text, _passwordController.text);
-        if(currentUser?.isHasProfile == true){
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => Layout()),
+      onTap: _isFormValid
+          ? () async {
+        try {
+          final currentUser = await _databaseService.login(
+              _emailController.text, _passwordController.text);
+          if(currentUser == null){
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Login failed')),
+            );
+            return;
+          };
+          if (currentUser.isHasProfile == true) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Layout()),
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ChooseRole(email: currentUser.email.toString())),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Login failed')),
           );
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => ChooseRole(email: currentUser!.email.toString())),
-          );
-        }
-      },
+  }
+}
+: null,
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 15),
@@ -102,7 +133,9 @@ class _LoginPageState extends State<LoginPage> {
             gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [Color(0xfffbb448), Color(0xfff7892b)])),
+                colors: _isFormValid
+                    ? [Color(0xfffbb448), Color(0xfff7892b)]
+                    : [Colors.grey, Colors.grey])),
         child: Text(
           'Login',
           style: TextStyle(fontSize: 20, color: Colors.white),
@@ -264,28 +297,30 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(height: height * .2),
-                  _title(),
-                  SizedBox(height: 50),
-                  _emailPasswordWidget(),
-                  SizedBox(height: 20),
-                  _submitButton(),
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    alignment: Alignment.centerRight,
-                    child: Text('Forgot Password ?',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500)),
-                  ),
-                  _divider(),
-                  _googleButton(),
-                  SizedBox(height: height * .055),
-                  _createAccountLabel(),
-                ],
+              child: Form(
+                key: _formKey,
+                onChanged: _validateForm,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: height * .2),
+                    _title(),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    _emailPasswordWidget(),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    _submitButton(),
+                    SizedBox(height: height * .02),
+                    _divider(),
+                    _googleButton(),
+                    SizedBox(height: height * .02),
+                    _createAccountLabel(),
+                  ],
+                ),
               ),
             ),
           ),

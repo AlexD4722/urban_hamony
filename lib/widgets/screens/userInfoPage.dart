@@ -100,7 +100,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                     ),
                   ),
                 ),
-                _buildNavigationButtons(),
+                _buildNavigationButtons(context),
               ],
             ),
           ),
@@ -123,7 +123,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
       ],
     );
   }
-  Widget _buildNavigationButtons() {
+  Widget _buildNavigationButtons(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       child: Row(
@@ -162,10 +162,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
                       widget.role
                   );
                   if(createStatus){
-                    Navigator.pushReplacement(
+                    Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => Layout()),
-
+                      MaterialPageRoute(builder: (context) => const Layout()),
+                          (Route<dynamic> route) => false,
                     );
                   }
                 }
@@ -178,7 +178,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
               ),
-              child: Text(
+              child: const Text(
                 'Finish',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
@@ -248,8 +248,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildGenderButton('Male', Icons.male),
-        _buildGenderButton('Female', Icons.female),
+       Flexible(child:  _buildGenderButton('Male', Icons.male)),
+        const SizedBox(width: 10),
+        Flexible(child: _buildGenderButton('Female', Icons.female))
       ],
     );
   }
@@ -264,7 +265,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
         });
       },
       child: Container(
-        width: 150,
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xffe38b0e) : Colors.white,
@@ -295,7 +295,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
               gender,
               style: TextStyle(
                 color: isSelected ? Colors.white : Colors.black87,
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),

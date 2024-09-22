@@ -18,8 +18,16 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _comfirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _isFormValid = false;
+  String _errorMessage = '';
   DatabaseService _databaseService = DatabaseService();
+  void _validateForm() {
+    setState(() {
+      _isFormValid = _formKey.currentState?.validate() ?? false;
+    });
+  }
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -54,36 +62,56 @@ class _SignUpPageState extends State<SignUpPage> {
           SizedBox(
             height: 10,
           ),
-          TextField(
+          TextFormField(
               controller: controller,
               obscureText: isPassword,
               decoration: InputDecoration(
                   border: InputBorder.none,
                   fillColor: Color(0xfff3f3f4),
-                  filled: true))
+                  filled: true),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your $title';
+                }
+                if (title == "Email" && !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                  return 'Please enter a valid email address';
+                }
+                if (title == "Password" && value.length <= 5) {
+                  return 'Password must be greater than 5 characters';
+                }
+                if (title == "Confirm Password" && value != _passwordController.text) {
+                  return 'Passwords do not match';
+                }
+                return null;
+              })
         ],
       ),
     );
   }
-
   Widget _submitButton() {
     return InkWell(
-      onTap: () async {
-        print('Clicked');
-        if(_passwordController.text == _comfirmPasswordController.text){
+      onTap: _isFormValid
+          ? () async {
+        if (_passwordController.text == _confirmPasswordController.text) {
           final signUpStatus = await _databaseService.addUser(_emailController.text, _passwordController.text);
-          if(signUpStatus){
+          if (signUpStatus) {
             final currentUser = await _databaseService.login(_emailController.text, _passwordController.text);
-            print(currentUser?.email);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => ChooseRole(email: currentUser!.email.toString())),
             );
           } else {
-            print('Sign Up Failed');
+            setState(() {
+              _errorMessage = 'Sign Up Failed';
+            });
           }
+        } else {
+          setState(() {
+            _errorMessage = 'Passwords do not match';
+          });
         }
-      },
+      }
+          : null,
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 15),
@@ -100,7 +128,9 @@ class _SignUpPageState extends State<SignUpPage> {
             gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: [Color(0xfffbb448), Color(0xfff7892b)])),
+                colors: _isFormValid
+                    ? [Color(0xfffbb448), Color(0xfff7892b)]
+                    : [Colors.grey, Colors.grey])),
         child: Text(
           'Register Now',
           style: TextStyle(fontSize: 20, color: Colors.white),
@@ -108,7 +138,6 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
-
   Widget _loginAccountLabel() {
     return InkWell(
       onTap: () {
@@ -143,26 +172,9 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget _title() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-          text: 'd',
-          style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.w700,
-              color: Color(0xffe46b10)
-          ),
-
-          children: [
-            TextSpan(
-              text: 'ev',
-              style: TextStyle(color: Colors.black, fontSize: 30),
-            ),
-            TextSpan(
-              text: 'rnz',
-              style: TextStyle(color: Color(0xffe46b10), fontSize: 30),
-            ),
-          ]),
+    return Container(
+      width: 80,
+      child: Image.asset('assets/images/urban.png'),
     );
   }
 
@@ -171,11 +183,21 @@ class _SignUpPageState extends State<SignUpPage> {
       children: <Widget>[
         _entryField("Email", _emailController),
         _entryField("Password", _passwordController, isPassword: true),
-        _entryField("Comfirm Password",_comfirmPasswordController, isPassword: true),
+        _entryField("Confirm Password",_confirmPasswordController, isPassword: true),
       ],
     );
   }
-
+  Widget _errorMessageWidget() {
+    return _errorMessage.isNotEmpty
+        ? Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        _errorMessage,
+        style: TextStyle(color: Colors.red, fontSize: 14),
+      ),
+    )
+        : Container();
+  }
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -192,24 +214,25 @@ class _SignUpPageState extends State<SignUpPage> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: height * .2),
-                    _title(),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    _emailPasswordWidget(),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    _submitButton(),
-                    SizedBox(height: height * .14),
-                    _loginAccountLabel(),
-                  ],
-                ),
+                child: Form(
+                  key: _formKey,
+                  onChanged: _validateForm,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(height: 50),
+                      _title(),
+                      SizedBox(height: 50),
+                      _emailPasswordWidget(),
+                      _errorMessageWidget(),
+                      SizedBox(height: 20),
+                      _submitButton(),
+                      SizedBox(height: 20),
+                      _loginAccountLabel(),
+                    ],
+                  ),
+                )
               ),
             ),
             Positioned(top: 40, left: 0, child: _backButton()),

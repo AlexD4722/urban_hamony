@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import '../../models/product.dart';
+import '../../providers/cartProvider.dart';
 import 'checkoutScreen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -13,9 +15,11 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   double get totalPrice {
     double total = 0;
-    for (var cart in demoCarts) {
+    final cartProvider = Provider.of<CartProvider>(context);
+    for (var cart in cartProvider.demoCarts) {
       total += cart.product.price * cart.numOfItem;
     }
+    print("===================Total: $total");
     return total;
   }
 
@@ -31,45 +35,51 @@ class _CartScreenState extends State<CartScreen> {
               "Your Cart",
               style: TextStyle(color: Colors.black),
             ),
-            Text(
-              "${demoCarts.length} items",
-              style: Theme.of(context).textTheme.bodySmall,
+            Consumer<CartProvider>(
+              builder: (context, cartProvider, child) {
+                return Text(
+                  "${cartProvider.demoCarts.length} items",
+                  style: Theme.of(context).textTheme.bodySmall,
+                );
+              },
             ),
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: ListView.builder(
-          itemCount: demoCarts.length,
-          itemBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Dismissible(
-              key: Key(demoCarts[index].product.id.toString()),
-              direction: DismissDirection.endToStart,
-              onDismissed: (direction) {
-                setState(() {
-                  demoCarts.removeAt(index);
-                });
-              },
-              background: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFE6E6),
-                  borderRadius: BorderRadius.circular(15),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Consumer<CartProvider>(
+            builder: (context, cartProvider, child) {
+              return ListView.builder(
+                itemCount: cartProvider.demoCarts.length,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Dismissible(
+                    key: Key(cartProvider.demoCarts[index].product.id.toString()),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (direction) {
+                      cartProvider.removeCart(index);
+                    },
+                    background: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFE6E6),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Row(
+                        children: [
+                          const Spacer(),
+                          SvgPicture.string(trashIcon),
+                        ],
+                      ),
+                    ),
+                    child: CartCard(cart: cartProvider.demoCarts[index]),
+                  ),
                 ),
-                child: Row(
-                  children: [
-                    const Spacer(),
-                    SvgPicture.string(trashIcon),
-                  ],
-                ),
-              ),
-              child: CartCard(cart: demoCarts[index]),
-            ),
+              );
+            },
           ),
         ),
-      ),
       bottomNavigationBar: CheckoutCard(totalPrice: totalPrice),
     );
   }
@@ -115,11 +125,14 @@ class CartCard extends StatelessWidget {
               TextSpan(
                 text: "\$${cart.product.price}",
                 style: const TextStyle(
-                    fontWeight: FontWeight.w600, color: Color(0xFFFF7643)),
+                    fontWeight: FontWeight.w600, color: Color(0xfffbb448)),
                 children: [
                   TextSpan(
                       text: " x${cart.numOfItem}",
-                      style: Theme.of(context).textTheme.bodyLarge),
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .bodyLarge),
                 ],
               ),
             )
@@ -188,7 +201,8 @@ class CheckoutCard extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: "\$$totalPrice",
-                          style: const TextStyle(fontSize: 16, color: Colors.black),
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.black),
                         ),
                       ],
                     ),
@@ -197,11 +211,12 @@ class CheckoutCard extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => CheckoutScreen()));
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => CheckoutScreen()));
                     },
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
-                      backgroundColor: const Color(0xFFFF7643),
+                      backgroundColor: const Color(0xfffbb448),
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 48),
                       shape: const RoundedRectangleBorder(
@@ -227,12 +242,9 @@ class Cart {
   Cart({required this.product, required this.numOfItem});
 }
 
-List<Cart> demoCarts = [];
-
-
 const receiptIcon =
 '''<svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M2.18 19.85C2.27028 19.9471 2.3974 20.0016 2.53 20H2.82C2.9526 20.0016 3.07972 19.9471 3.17 19.85L5 18C5.19781 17.8082 5.51219 17.8082 5.71 18L7.52 19.81C7.61028 19.9071 7.7374 19.9616 7.87 19.96H8.16C8.2926 19.9616 8.41972 19.9071 8.51 19.81L10.32 18C10.5136 17.8268 10.8064 17.8268 11 18L12.81 19.81C12.9003 19.9071 13.0274 19.9616 13.16 19.96H13.45C13.5826 19.9616 13.7097 19.9071 13.8 19.81L15.71 18C15.8947 17.8137 15.9989 17.5623 16 17.3V1C16 0.447715 15.5523 0 15 0H1C0.447715 0 0 0.447715 0 1V17.26C0.00368349 17.5248 0.107266 17.7784 0.29 17.97L2.18 19.85ZM9 11.5C9 11.7761 8.77614 12 8.5 12H4.5C4.22386 12 4 11.7761 4 11.5V10.5C4 10.2239 4.22386 10 4.5 10H8.5C8.77614 10 9 10.2239 9 10.5V11.5ZM11.5 8C11.7761 8 12 7.77614 12 7.5V6.5C12 6.22386 11.7761 6 11.5 6H4.5C4.22386 6 4 6.22386 4 6.5V7.5C4 7.77614 4.22386 8 4.5 8H11.5Z" fill="#FF7643"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M2.18 19.85C2.27028 19.9471 2.3974 20.0016 2.53 20H2.82C2.9526 20.0016 3.07972 19.9471 3.17 19.85L5 18C5.19781 17.8082 5.51219 17.8082 5.71 18L7.52 19.81C7.61028 19.9071 7.7374 19.9616 7.87 19.96H8.16C8.2926 19.9616 8.41972 19.9071 8.51 19.81L10.32 18C10.5136 17.8268 10.8064 17.8268 11 18L12.81 19.81C12.9003 19.9071 13.0274 19.9616 13.16 19.96H13.45C13.5826 19.9616 13.7097 19.9071 13.8 19.81L15.71 18C15.8947 17.8137 15.9989 17.5623 16 17.3V1C16 0.447715 15.5523 0 15 0H1C0.447715 0 0 0.447715 0 1V17.26C0.00368349 17.5248 0.107266 17.7784 0.29 17.97L2.18 19.85ZM9 11.5C9 11.7761 8.77614 12 8.5 12H4.5C4.22386 12 4 11.7761 4 11.5V10.5C4 10.2239 4.22386 10 4.5 10H8.5C8.77614 10 9 10.2239 9 10.5V11.5ZM11.5 8C11.7761 8 12 7.77614 12 7.5V6.5C12 6.22386 11.7761 6 11.5 6H4.5C4.22386 6 4 6.22386 4 6.5V7.5C4 7.77614 4.22386 8 4.5 8H11.5Z" fill="#fbb448"/>
 </svg>
 ''';
 

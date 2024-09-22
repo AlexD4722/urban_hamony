@@ -22,19 +22,15 @@ class _LayoutState extends State<Layout> {
     'Home',
     'Product',
     'Project',
-    'Gallery',
     'Profile',
-    'Cart'
   ], [
     const HomeScreen(),
     const ProductScreen(),
     const ProjectScreen(),
-    const GalleryScreen(),
-    const ProfileScreen(),
-    const CartScreen()
+    const ProfileScreen()
   ]);
 
-  final List<String> screenNames = ['Home', 'Product', 'Project', 'Gallery', 'Profile','Cart'];
+  final List<String> screenNames = ['Home', 'Product', 'Project', 'Profile'];
 
   final _navBarItems = [
     SalomonBottomBarItem(
@@ -43,29 +39,19 @@ class _LayoutState extends State<Layout> {
       selectedColor: Colors.orange,
     ),
     SalomonBottomBarItem(
-      icon: const Icon(Icons.category),
+      icon: const Icon(Icons.shopping_bag),
       title: const Text("Product"),
       selectedColor: Colors.purple,
     ),
     SalomonBottomBarItem(
-      icon: const Icon(Icons.work),
+      icon: const Icon(Icons.build),
       title: const Text("Projects"),
       selectedColor: Colors.redAccent,
-    ),
-    SalomonBottomBarItem(
-      icon: const Icon(Icons.photo_library),
-      title: const Text("Gallery"),
-      selectedColor: Colors.lightBlueAccent,
     ),
     SalomonBottomBarItem(
       icon: const Icon(Icons.person),
       title: const Text("Profile"),
       selectedColor: Colors.green,
-    ),
-    SalomonBottomBarItem(
-      icon: const Icon(Icons.shopping_cart),
-      title: const Text("Cart"),
-      selectedColor: Colors.blueAccent,
     ),
   ];
 
@@ -74,6 +60,7 @@ class _LayoutState extends State<Layout> {
     var selectedIndex = context.select((RootProvider provider) => provider.pageIndex);
     var setIndex = context.read<RootProvider>().setPageIndex;
     return Scaffold(
+      backgroundColor: const Color(0xFFF6F6F6),
       body: SafeArea(
         child: screens[screenNames[selectedIndex]]!,
       ),

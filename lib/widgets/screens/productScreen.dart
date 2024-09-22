@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:urban_hamony/widgets/screens/detailScreen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../models/product.dart';
+import '../../providers/cartProvider.dart';
+import 'cart.dart';
+import 'cartEmpty.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({super.key});
@@ -60,6 +64,7 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF6F6F6),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(vertical: 16),
@@ -359,10 +364,76 @@ class HomeHeader extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          IconBtnWithCounter(
-            svgSrc: cartIcon,
-            press: () {},
-          ),
+          Row(
+            children: [
+              InkWell(
+                onTap: () {
+                  final demoCarts =
+                      Provider
+                          .of<CartProvider>(context, listen: false)
+                          .demoCarts;
+                  if (demoCarts.isEmpty) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CartEmpty()),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CartScreen()),
+                    );
+                  }
+                },
+                child: Consumer<CartProvider>(
+                  builder: (context, cartProvider, child) {
+                    int totalItems = cartProvider.demoCarts.fold(
+                        0, (sum, cart) => sum + cart.numOfItem);
+                    return Stack(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(right: 10),
+                          padding: const EdgeInsets.all(12),
+                          height: 50,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFFFFFFF),
+                            shape: BoxShape.circle,
+                          ),
+                          child: SvgPicture.string(cartIcon),
+                        ),
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: const BoxDecoration(
+                              color: Color(0xfffbb448),
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              '$totalItems',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );
@@ -515,7 +586,7 @@ class ProductCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFFFF7643),
+                    color: Color(0xfffbb448),
                   ),
                 ),
               ],

@@ -88,11 +88,11 @@ class ErrorInfo extends StatelessWidget {
                   onPressed: press,
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 48),
-                      backgroundColor: Colors.black,
+                      backgroundColor: const Color(0xfffbb448),
                       foregroundColor: Colors.white,
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8)))),
-                  child: Text(btnText ?? "Retry".toUpperCase()),
+                  child: Text(btnText ?? "Retry".toUpperCase(), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
             const SizedBox(height: 16),
           ],

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'dart:math' as math;
 import '../components/card/cardProject.dart';
 import '../components/card/cardProjectScreen.dart';
+import 'drawScreen.dart';
 
 class ProjectScreen extends StatelessWidget {
   const ProjectScreen({Key? key}) : super(key: key);
@@ -63,7 +65,7 @@ class ProjectScreen extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(child: _addCardProject()),
+                        Expanded(child: _addCardProject(context)),
                         SizedBox(width: 10),
                         Expanded(
                           child: projects.isNotEmpty
@@ -125,9 +127,14 @@ class ProjectScreen extends StatelessWidget {
     ;
   }
 
-  Widget _addCardProject() {
+  Widget _addCardProject(BuildContext context) {
     return GestureDetector(
-      onTap: () => {},
+      onTap: () => {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DrawScreen()),
+        )
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.end,
