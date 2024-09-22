@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:urban_hamony/services/database_service.dart';
 import 'package:urban_hamony/widgets/screens/chooseRole.dart';
 import 'package:urban_hamony/widgets/signup.dart';
@@ -27,6 +30,13 @@ class _LoginPageState extends State<LoginPage> {
       _isFormValid = _formKey.currentState?.validate() ?? false;
     });
   }
+
+  Future<void> saveCurrentUser(currentUser) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = jsonEncode(currentUser);
+    prefs.setString('currentUser', jsonString);
+  }
+
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -95,6 +105,15 @@ class _LoginPageState extends State<LoginPage> {
           if(currentUser == null){
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Login failed')),
+      onTap: () async {
+        final currentUser = await _databaseService.login(
+            _emailController.text, _passwordController.text);
+        if(currentUser?.isHasProfile == true){
+          saveCurrentUser(currentUser);
+          if(currentUser?.role != 'admin'){
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => Layout()),
             );
             return;
           };
@@ -206,6 +225,7 @@ class _LoginPageState extends State<LoginPage> {
                   )),
             );
           } else {
+            saveCurrentUser(user);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => Layout()),);

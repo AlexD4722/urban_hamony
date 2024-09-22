@@ -118,7 +118,6 @@ class DatabaseService {
         }
         return null;
       } else {
-        print("Không tìm thấy người dùng!");
         return null;
       }
     } catch (e) {
@@ -253,5 +252,39 @@ class DatabaseService {
     });
   }
 
+  Future<UserModel> getUserProfile(String email) async {
+    if (_usersCollection == null) {
+      _setupCollectionReferences();
+    }
+    try {
+      QuerySnapshot querySnapshot = await _usersCollection!
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        QueryDocumentSnapshot doc = querySnapshot.docs.first;
+        UserModel data = doc.data() as UserModel;
+        UserModel user = UserModel.fromJson(data.toJson());
+        if(email == user.email){
+          UserModel userWithoutPassword = UserModel(
+              firstName: user.firstName,
+              lastName: user.lastName,
+              gender: user.gender,
+              urlAvatar: user.urlAvatar,
+              email: user.email,
+              role: user.role,
+              isHasProfile: user.isHasProfile
+          );
+          return userWithoutPassword;
+        }
+        return UserModel();
+      } else {
+        return UserModel();
+      }
+    } catch (e) {
+      print("Error: $e");
+      return UserModel();
+    }
+  }
 
 }

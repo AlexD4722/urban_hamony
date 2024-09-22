@@ -1,197 +1,211 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:urban_hamony/models/auth_model.dart';
+import 'package:urban_hamony/services/database_service.dart';
+import 'package:urban_hamony/widgets/login_page.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
-
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
-
 class _ProfileScreenState extends State<ProfileScreen> {
+  DatabaseService _databaseService = DatabaseService();
+  bool _isLoading = true;
+  UserModel _user = UserModel();
+
+  Future<void> _getUserP(String email) async {
+    UserModel userP = await _databaseService.getUserProfile(email);
+    setState(() {
+      _user = userP;
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _getId () async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('currentUser');
+    if (jsonString != null) {
+      final currentUser = jsonDecode(jsonString);
+      final email = currentUser['email'];
+      await _getUserP(email);
+    }
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    _getId();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final List<ProfileInfoItem> _items = [
+      ProfileInfoItem("${_user.gender}", "Gender"),
+      ProfileInfoItem("${_user.role}", "Role"),
+      ProfileInfoItem("Verified", "Verify"),
+    ];
     return Scaffold(
-      appBar: _buildAppBar(),
-      body: Container(
-        color: const Color(0xFFF6F6F6),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildProfileCard(),
-            const SizedBox(height: 32),
-            Expanded(child: _buildOptionsList()),
-            _buildFooter(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: const Color(0xFFF6F6F6),
-      elevation: 0,
-      toolbarHeight: 80,
-      title: const Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          'Profile',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-      ),
-      actions: [
-        Container(
-          margin: const EdgeInsets.only(right: 16),
-          decoration: const BoxDecoration(
-            color: Color(0xFFFFFFFF),
-            shape: BoxShape.circle,
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.logout, color: Colors.orange),
-            onPressed: () {
-              // Handle logout
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildProfileCard() {
-    return Container(
-      width: double.infinity,
-      child: Card(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        elevation: 0,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: Colors.grey[300],
-                backgroundImage: const AssetImage('assets/images/avatar.jpg'),
+      appBar: _buildAppBar(context),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Colors.orange,
               ),
-              const SizedBox(height: 16),
-              const Text(
-                'John Doe',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+            )
+          : Column(
+        children: [
+          Expanded(
+              flex: 2,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 50),
+                    decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [Color(0xFFFF5733), Color(0xFFFECF02)]),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(50),
+                          bottomRight: Radius.circular(50),
+                        )),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: SizedBox(
+                      width: 150,
+                      height: 150,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage('${_user.urlAvatar}')),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'johndoe@example.com',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
-                ),
-              ),
-            ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOptionsList() {
-    return ListView(
-      children: [
-        _buildListTile(Icons.settings, 'App Settings', () {
-          // Navigate to App Settings screen
-        }),
-        _buildListTile(Icons.person, 'Profiles', () {
-          // Navigate to Profiles screen
-        }),
-        _buildListTile(Icons.history, 'Order History', () {
-          // Navigate to Order History screen
-        }),
-        _buildListTile(Icons.bookmark, 'Saved', () {
-          // Navigate to Saved Items screen
-        }),
-        _buildExpansionTile(),
-      ],
-    );
-  }
-
-  ListTile _buildListTile(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.orange, size: 30),
-      title: Text(
-        title,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-      ),
-      onTap: onTap,
-    );
-  }
-
-  ExpansionTile _buildExpansionTile() {
-    return ExpansionTile(
-      leading: const Icon(Icons.help, color: Colors.orange, size: 30),
-      title: const Text(
-        'Support',
-        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-
-      ),
-      shape: const Border(bottom: BorderSide(color: Colors.grey)),
-      children: [
-        _buildExpansionTileItem('Report Problem', () {
-          // Navigate to Report Problem screen
-        }),
-        _buildExpansionTileItem('About', () {
-          // Navigate to About screen
-        }),
-        _buildExpansionTileItem('Schedule', () {
-          // Navigate to Schedule screen
-        }),
-      ],
-    );
-  }
-
-  ListTile _buildExpansionTileItem(String title, VoidCallback onTap) {
-    return ListTile(
-        title: Text(
-          title,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        onTap: onTap
-    );
-  }
-
-  Widget _buildFooter() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Center(
-        child: Column(
-          children: const [
-            Text(
-              '© 2024',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Text(
+                    '${_user.firstName} ${_user.lastName}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 80,
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: _items
+                          .map((item) => Expanded(
+                          child: Row(
+                            children: [
+                              if (_items.indexOf(item) != 0) const VerticalDivider(),
+                              Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          item.value.toString(),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        item.title,
+                                        style: Theme.of(context).textTheme.bodySmall,
+                                      )
+                                    ],
+                                  ),
+                              ),
+                            ],
+                          )))
+                          .toList(),
+                    ),
+                  )
+                ],
               ),
             ),
-            Text(
-              'Authored by Ongbapcay Group',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        ],
+      )
     );
   }
+}
+
+
+
+AppBar _buildAppBar(context) {
+  Future<bool> _signOut() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    return true;
+  }
+  return AppBar(
+    backgroundColor: const Color(0xFFF6F6F6),
+    elevation: 0,
+    toolbarHeight: 80,
+    title: const Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        'Profile',
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ),
+    ),
+    actions: [
+      Container(
+        margin: const EdgeInsets.only(right: 16),
+        decoration: const BoxDecoration(
+          color: Color(0xFFFFFFFF),
+          shape: BoxShape.circle,
+        ),
+        child: IconButton(
+          icon: const Icon(Icons.logout, color: Colors.orange),
+          onPressed: () {
+            _signOut();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginPage()),
+            );
+          },
+        ),
+      ),
+    ],
+  );
+}
+
+class ProfileInfoItem {
+  final String title;
+  final String value;
+  const ProfileInfoItem(this.title, this.value);
 }

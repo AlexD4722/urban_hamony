@@ -19,5 +19,5 @@ void main() async {
     ChangeNotifierProvider(create: (context) => RootProvider()),
     ChangeNotifierProvider(create: (context) => RoomTypeProvider()),
     ChangeNotifierProvider(create: (context) =>  CartProvider())
-  ], child: const Application()));
+  ], child: Application()));
 }
