@@ -5,6 +5,7 @@ import 'package:urban_hamony/widgets/signup.dart';
 
 import '../models/auth_model.dart';
 import '../services/auth_google_service.dart';
+import 'admin_page.dart';
 import 'components/bezierContainer.dart';
 import 'layout.dart';
 
@@ -77,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
         if(currentUser?.isHasProfile == true){
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => Layout()),
+            MaterialPageRoute(builder: (context) => AdminPage()),
           );
         } else {
           Navigator.pushReplacement(
