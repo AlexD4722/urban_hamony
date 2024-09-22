@@ -51,7 +51,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
   Future<void> _getImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
