@@ -106,6 +106,7 @@ class _ProductListPageState extends State<ProductListPage> {
                                   children: [
                                     Text('Price: \$${products[index].price}'),
                                     Text('Quantity: ${products[index].quantity}'),
+                                    Text('Description: ${products[index].description}'),
                                   ],
                                 ),
                               ),

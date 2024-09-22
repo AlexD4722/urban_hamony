@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:urban_hamony/widgets/screens/detailScreen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../models/product.dart';
+import '../../models/product_model.dart';
 import '../../providers/cartProvider.dart';
+import '../../services/database_service.dart';
 import 'cart.dart';
 import 'cartEmpty.dart';
 
@@ -16,6 +18,22 @@ class ProductScreen extends StatefulWidget {
 }
 
 class _ProductScreenState extends State<ProductScreen> {
+  DatabaseService _databaseService = DatabaseService();
+  List<ProductModel> _generateProductsList(List<ProductModel> chats){
+    List<ProductModel> products = chats.map((c) {
+      return ProductModel(
+          name: c.name,
+          code: c.code,
+          price: c.price,
+          description: c.description,
+          status: c.status,
+          category: c.category,
+          quantity: c.quantity,
+          urlImages: c.urlImages
+      );
+    }).toList();
+    return products;
+  }
   List<Product> demoProducts = [
     Product(
       id: 1,
@@ -65,33 +83,47 @@ class _ProductScreenState extends State<ProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(vertical: 16),
-          child: Column(
-            children: [
-              const HomeHeader(),
-              TableProducts(listProduct: demoProducts.where((product) => product
-                  .category == "table").toList()),
-              SizedBox(height: 20),
-              ChairProducts(listProduct: demoProducts.where((product) => product
-                  .category == "chair").toList()),
-              SizedBox(height: 20),
-              DoorProducts(listProduct: demoProducts.where((product) => product
-                  .category == "door").toList()),
-              SizedBox(height: 20),
-              WindowProducts(
-                  listProduct: demoProducts.where((product) => product
-                      .category == "window").toList()),
-              SizedBox(height: 20),
-              BedProducts(listProduct: demoProducts.where((product) => product
-                  .category == "bed").toList()),
-              SizedBox(height: 20),
-              TreeProducts(listProduct: demoProducts.where((product) => product
-                  .category == "tree").toList()),
-            ],
-          ),
-        ),
+      body: StreamBuilder(
+        stream: _databaseService.getProductCollection(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          final List<ProductModel> data = snapshot.data!;
+          List<ProductModel> products = _generateProductsList(
+              data
+          );
+          return SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Column(
+                children: [
+                  const HomeHeader(),
+                  TableProducts(listProduct: demoProducts.where((product) => product
+                      .category == "table").toList()),
+                  SizedBox(height: 20),
+                  ChairProducts(listProduct: demoProducts.where((product) => product
+                      .category == "chair").toList()),
+                  SizedBox(height: 20),
+                  DoorProducts(listProduct: demoProducts.where((product) => product
+                      .category == "door").toList()),
+                  SizedBox(height: 20),
+                  WindowProducts(
+                      listProduct: demoProducts.where((product) => product
+                          .category == "window").toList()),
+                  SizedBox(height: 20),
+                  BedProducts(listProduct: demoProducts.where((product) => product
+                      .category == "bed").toList()),
+                  SizedBox(height: 20),
+                  TreeProducts(listProduct: demoProducts.where((product) => product
+                      .category == "tree").toList()),
+                ],
+              ),
+            ),
+          );
+        }
       ),
     );
   }

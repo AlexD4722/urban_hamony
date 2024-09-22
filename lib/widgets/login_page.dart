@@ -3,6 +3,7 @@ import 'package:urban_hamony/services/database_service.dart';
 import 'package:urban_hamony/widgets/screens/chooseRole.dart';
 import 'package:urban_hamony/widgets/signup.dart';
 import '../services/auth_google_service.dart';
+import 'admin_page.dart';
 import 'components/bezierContainer.dart';
 import 'layout.dart';
 
@@ -98,10 +99,17 @@ class _LoginPageState extends State<LoginPage> {
             return;
           };
           if (currentUser.isHasProfile == true) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => Layout()),
-            );
+            if(currentUser?.role != 'admin'){
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Layout()),
+              );
+            }else{
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => AdminPage()),
+              );
+            }
           } else {
             Navigator.pushReplacement(
               context,

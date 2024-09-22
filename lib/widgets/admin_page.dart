@@ -6,6 +6,7 @@ import 'package:urban_hamony/widgets/screens/adm_blog_screen.dart';
 import 'package:urban_hamony/widgets/screens/adm_product_screen.dart';
 import 'package:urban_hamony/widgets/screens/galleryScreen.dart';
 import 'package:urban_hamony/widgets/screens/homeScreen.dart';
+import 'package:urban_hamony/widgets/screens/profileScreen.dart';
 import 'package:urban_hamony/widgets/screens/projectScreen.dart';
 import '../providers/root.dart';
 import 'dart:math' as math;
@@ -21,16 +22,16 @@ class _AdminPageState extends State<AdminPage> {
   final HashMap<String, Widget> screens =
   HashMap<String, Widget>.fromIterables([
     'Home',
-    'Project',
-    'Gallery',
-    'Profile'
+    'Product',
+    'Blog',
+    'Profile',
   ], [
     const HomeScreen(),
     const ProductListPage(),
     const BlogListPage(),
-    const ProjectScreen()
+    const ProfileScreen()
   ]);
-  final List<String> screenNames = ['Home', 'Project', 'Gallery', 'Profile'];
+  final List<String> screenNames = ['Home', 'Product', 'Blog', 'Profile'];
   final _navBarItems = [
     SalomonBottomBarItem(
       icon: const Icon(Icons.home),
@@ -56,24 +57,20 @@ class _AdminPageState extends State<AdminPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final padding = screenWidth * 0.05;
-    var selectedIndex =
-    context.select((RootProvider provider) => provider.pageIndex);
+    var selectedIndex = context.select((RootProvider provider) => provider.pageIndex);
     var setIndex = context.read<RootProvider>().setPageIndex;
     return Scaffold(
       body: SafeArea(
           child: SizedBox(
-            child: screens[selectedIndex],
+            child: screens[screenNames[selectedIndex]]!,
           )
       ),
       bottomNavigationBar: SalomonBottomBar(
-          currentIndex: context
-              .select((RootProvider provider) => provider.getPageIndex()),
+          currentIndex: selectedIndex,
           selectedItemColor: const Color(0xff6200ee),
           unselectedItemColor: const Color(0xff757575),
           onTap: (index) {
-            setIndex(screenNames[index]);
+            setIndex(index);
           },
           items: _navBarItems),
     );
