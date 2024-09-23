@@ -263,17 +263,25 @@ class CartSummary extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               ...cartProvider.demoCarts.map((cart) {
-                return Row(
-                  children: [
-                    Image.network(
-                      cart.product.urlImages[0] ?? "",
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover,
-                    ),
-                    const SizedBox(width: 10),
-                    Text("${cart.product.name} x ${cart.numOfItem}"),
-                  ],
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Row(
+                    children: [
+                      Image.network(
+                        cart.product.urlImages[0] ?? "",
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          "${cart.product.name} x ${cart.numOfItem}",
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               }).toList(),
             ],
