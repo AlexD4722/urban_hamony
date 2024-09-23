@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:urban_hamony/models/auth_model.dart';
 import 'package:urban_hamony/services/database_service.dart';
 import 'package:urban_hamony/widgets/login_page.dart';
+
+import '../../providers/root.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -49,6 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ProfileInfoItem("Verified", "Verify"),
     ];
     return Scaffold(
+      backgroundColor: const Color(0xFFFFFFFF),
       appBar: _buildAppBar(context),
       body: _isLoading
           ? Center(
@@ -165,10 +169,12 @@ AppBar _buildAppBar(context) {
   Future<bool> _signOut() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+    Provider.of<UserModel>(context, listen: false).clear();
+    Provider.of<RootProvider>(context, listen: false).clear();
     return true;
   }
   return AppBar(
-    backgroundColor: const Color(0xFFF6F6F6),
+    backgroundColor: const Color(0xFFFFFFFF),
     elevation: 0,
     toolbarHeight: 80,
     title: const Align(
@@ -193,9 +199,10 @@ AppBar _buildAppBar(context) {
           icon: const Icon(Icons.logout, color: Colors.orange),
           onPressed: () {
             _signOut();
-            Navigator.push(
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => LoginPage()),
+                  (Route<dynamic> route) => false,
             );
           },
         ),

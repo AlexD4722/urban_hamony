@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:urban_hamony/widgets/screens/adm_blog_screen.dart';
 import 'package:urban_hamony/widgets/screens/adm_product_screen.dart';
-import 'package:urban_hamony/widgets/screens/galleryScreen.dart';
 import 'package:urban_hamony/widgets/screens/homeScreen.dart';
 import 'package:urban_hamony/widgets/screens/profileScreen.dart';
 import 'package:urban_hamony/widgets/screens/projectScreen.dart';
@@ -60,6 +59,7 @@ class _AdminPageState extends State<AdminPage> {
     var selectedIndex = context.select((RootProvider provider) => provider.pageIndex);
     var setIndex = context.read<RootProvider>().setPageIndex;
     return Scaffold(
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
           child: SizedBox(
             child: screens[screenNames[selectedIndex]]!,

@@ -40,7 +40,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   UserInfoEditField(
                     text: "Name",
                     child: TextFormField(
-                      initialValue: "Annette Black",
+                      initialValue: "",
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: const Color(0xfffbb448).withOpacity(0.05),
@@ -62,7 +62,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   UserInfoEditField(
                     text: "Phone",
                     child: TextFormField(
-                      initialValue: "(316) 555-0116",
+                      initialValue: "(84)",
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: const Color(0xfffbb448).withOpacity(0.05),
@@ -84,7 +84,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   UserInfoEditField(
                     text: "Address",
                     child: TextFormField(
-                      initialValue: "New York, NVC",
+                      initialValue: "",
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: const Color(0xfffbb448).withOpacity(0.05),

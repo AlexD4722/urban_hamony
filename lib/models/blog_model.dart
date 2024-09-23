@@ -4,6 +4,7 @@ class BlogModel {
   String? title;
   String? category;
   String? description;
+  String? html;
   String? status;
 
   BlogModel({
@@ -13,6 +14,7 @@ class BlogModel {
     this.category,
     this.description,
     this.status,
+    this.html
   });
 
   BlogModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,7 @@ class BlogModel {
     category = json['category'];
     description = json['description'];
     status = json['status'];
+    html = json['html'];
   }
 
   Map<String, dynamic> toJson() {
@@ -31,6 +34,7 @@ class BlogModel {
     data['title'] = this.title;
     data['category'] = this.category;
     data['status'] = this.status;
+    data['html'] = this.html;
     return data;
   }
 }

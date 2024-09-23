@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'design.dart';
+
 class UserModel {
   String? urlAvatar;
   String? firstName;
@@ -11,6 +13,8 @@ class UserModel {
   String? password;
   bool? isHasProfile;
   String? gender;
+  List<Design>? listDesign; // Add listDesign property
+
   UserModel({
     this.urlAvatar,
     this.firstName,
@@ -19,7 +23,8 @@ class UserModel {
     this.email,
     this.password,
     this.isHasProfile,
-    this.gender
+    this.gender,
+    this.listDesign, // Initialize listDesign
   });
 
   UserModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +36,11 @@ class UserModel {
     password = json['password'];
     isHasProfile = json['isHasProfile'];
     gender = json['gender'];
+    if (json['listDesign'] != null) {
+      listDesign = (json['listDesign'] as List)
+          .map((item) => Design.fromJson(item))
+          .toList();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -43,24 +53,20 @@ class UserModel {
     data['password'] = this.password;
     data['isHasProfile'] = this.isHasProfile;
     data['gender'] = this.gender;
+    if (this.listDesign != null) {
+      data['listDesign'] = this.listDesign!.map((item) => item.toJson()).toList();
+    }
     return data;
   }
-  String getStringRepresentation() {
-    return 'UserModel(urlAvatar: $urlAvatar, firstName: $firstName, lastName: $lastName, role: $role, email: $email, password: $password, isHasProfile: $isHasProfile, gender: $gender)';
+  void clear() {
+    urlAvatar = null;
+    firstName = null;
+    lastName = null;
+    role = null;
+    email = null;
+    password = null;
+    isHasProfile = null;
+    gender = null;
+    listDesign = [];
   }
-  static Future<void> saveUser(UserModel user) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('user', user.getStringRepresentation());
-  }
-
-  static Future<UserModel?> getUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? userString = prefs.getString('user');
-    if (userString != null) {
-      Map<String, dynamic> userMap = jsonDecode(userString);
-      return UserModel.fromJson(userMap);
-    }
-    return null;
-  }
-
 }

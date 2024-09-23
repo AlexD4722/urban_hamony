@@ -1,14 +1,12 @@
 import 'dart:io';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:urban_hamony/services/database_service.dart';
 import 'package:urban_hamony/services/storage_service.dart';
-
+import 'package:uuid/uuid.dart';
 import '../components/bezierContainer.dart';
-
 class AddBlogPage extends StatefulWidget {
   const AddBlogPage({Key? key}) : super(key: key);
 
@@ -22,6 +20,7 @@ class _AddBlogPageState extends State<AddBlogPage> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _categoryController = TextEditingController();
+  TextEditingController _htmlController = TextEditingController();
   DatabaseService _databaseService = DatabaseService();
   StorageService _storageService = StorageService();
   List<String> _newPhotos = [];
@@ -39,7 +38,11 @@ class _AddBlogPageState extends State<AddBlogPage> {
     return File('');
   }
 
-
+  @override
+  void initState() {
+    super.initState();
+    _codeController.text = Uuid().v4(); // Generate unique code
+  }
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
 
@@ -115,17 +118,6 @@ class _AddBlogPageState extends State<AddBlogPage> {
                                           ),
                                         ),
                                       )
-                                      //     :
-                                      // Container(
-                                      //   decoration: BoxDecoration(
-                                      //     color: Colors.grey.shade300,
-                                      //     borderRadius: BorderRadius.circular(8),
-                                      //     image: DecorationImage(
-                                      //         fit: BoxFit.cover,
-                                      //         image: FileImage(File(_[index]))
-                                      //     ),
-                                      //   ),
-                                      // )
                                           :
                                       DottedBorder(
                                         color: Colors.grey.shade700,
@@ -182,7 +174,7 @@ class _AddBlogPageState extends State<AddBlogPage> {
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(5.0),
                                                     child: Image.asset(
-                                                      'lib/assets/images/clear_icon.png',
+                                                      'assets/images/clear_icon.png',
                                                       color: Colors.grey,
                                                     ),
                                                   )
@@ -198,7 +190,7 @@ class _AddBlogPageState extends State<AddBlogPage> {
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(5.0),
                                                   child: Image.asset(
-                                                    'lib/assets/images/add.png',
+                                                    'assets/images/add.png',
                                                     color: Colors.white,
                                                   ),
                                                 )
@@ -265,6 +257,7 @@ class _AddBlogPageState extends State<AddBlogPage> {
             uploadImages,
             _categoryController.text,
             _descriptionController.text,
+              _htmlController.text
           );
           Navigator.pop(context);
         } else {
@@ -299,10 +292,10 @@ class _AddBlogPageState extends State<AddBlogPage> {
   Widget _propertiesWidget() {
     return Column(
       children: <Widget>[
-        _entryField("Code", _codeController),
         _entryField("Title", _titleController),
         _entryField("Description", _descriptionController),
         _entryField("Category ", _categoryController),
+        _entryField("Content ", _htmlController),
 
       ],
     );

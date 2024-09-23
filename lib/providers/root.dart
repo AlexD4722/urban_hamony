@@ -9,4 +9,8 @@ class RootProvider with ChangeNotifier {
     _pageIndex = index;
     notifyListeners();
   }
+  void clear() {
+    _pageIndex = 0;
+    notifyListeners();
+  }
 }

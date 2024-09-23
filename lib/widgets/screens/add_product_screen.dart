@@ -189,7 +189,7 @@ class _AddProductPageState extends State<AddProductPage> {
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(5.0),
                                                     child: Image.asset(
-                                                      'lib/assets/images/clear_icon.png',
+                                                      'assets/images/clear_icon.png',
                                                       color: Colors.grey,
                                                     ),
                                                   )
@@ -205,7 +205,7 @@ class _AddProductPageState extends State<AddProductPage> {
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(5.0),
                                                   child: Image.asset(
-                                                    'lib/assets/images/add.png',
+                                                    'assets/images/add.png',
                                                     color: Colors.white,
                                                   ),
                                                 )
@@ -230,7 +230,7 @@ class _AddProductPageState extends State<AddProductPage> {
         ));
   }
 
-  Widget _entryField(String title, TextEditingController controller,
+  Widget _entryField(String title, TextEditingController controller, TextInputType type
       ) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -246,6 +246,7 @@ class _AddProductPageState extends State<AddProductPage> {
           ),
           TextField(
               controller: controller,
+              keyboardType: type,
               decoration: InputDecoration(
                   border: InputBorder.none,
                   fillColor: Color(0xFFD1D1D1),
@@ -267,8 +268,8 @@ class _AddProductPageState extends State<AddProductPage> {
           await _databaseService.addProduct(
               _nameController.text,
               _codeController.text,
-              _priceController.text as double,
-              _quantityController.text as int,
+              double.parse(_priceController.text),
+              int.parse(_quantityController.text),
               _categoryController.text,
               _descriptionController.text,
               uploadImages
@@ -306,12 +307,12 @@ class _AddProductPageState extends State<AddProductPage> {
   Widget _propertiesWidget() {
     return Column(
       children: <Widget>[
-        _entryField("Name", _nameController),
-        _entryField("Code", _codeController),
-        _entryField("Quantity", _quantityController),
-        _entryField("Price", _priceController),
-        _entryField("Category", _categoryController),
-        _entryField("Description", _descriptionController),
+        _entryField("Name", _nameController, TextInputType.text),
+        _entryField("Code", _codeController, TextInputType.text),
+        _entryField("Quantity", _quantityController, TextInputType.number),
+        _entryField("Price", _priceController, TextInputType.number),
+        _entryField("Category", _categoryController, TextInputType.text),
+        _entryField("Description", _descriptionController, TextInputType.text),
       ],
     );
   }

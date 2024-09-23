@@ -21,7 +21,6 @@ class _CartScreenState extends State<CartScreen> {
       double? price = cart.product.price is String ? double.tryParse(cart.product.price as String) ?? 0.0 : cart.product.price;
       total += (price! * cart.numOfItem)!;
     }
-    print("===================Total: $total");
     return total;
   }
 

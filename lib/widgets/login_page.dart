@@ -6,6 +6,7 @@ import 'package:urban_hamony/services/database_service.dart';
 import 'package:urban_hamony/widgets/screens/chooseRole.dart';
 import 'package:urban_hamony/widgets/signup.dart';
 import '../services/auth_google_service.dart';
+import '../utils/userInfoUtil.dart';
 import 'admin_page.dart';
 import 'components/bezierContainer.dart';
 import 'layout.dart';
@@ -30,34 +31,6 @@ class _LoginPageState extends State<LoginPage> {
       _isFormValid = _formKey.currentState?.validate() ?? false;
     });
   }
-
-  Future<void> saveCurrentUser(currentUser) async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = jsonEncode(currentUser);
-    prefs.setString('currentUser', jsonString);
-  }
-
-  Widget _backButton() {
-    return InkWell(
-      onTap: () {
-        Navigator.pop(context);
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(left: 0, top: 10, bottom: 10),
-              child: Icon(Icons.keyboard_arrow_left, color: Colors.black),
-            ),
-            Text('Back',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _entryField(String title, TextEditingController controller,
       {bool isPassword = false}) {
     return Container(
@@ -105,31 +78,25 @@ class _LoginPageState extends State<LoginPage> {
           if(currentUser == null){
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Login failed')),
-      onTap: () async {
-        final currentUser = await _databaseService.login(
-            _emailController.text, _passwordController.text);
-        if(currentUser?.isHasProfile == true){
-          saveCurrentUser(currentUser);
-          if(currentUser?.role != 'admin'){
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => Layout()),
             );
             return;
           };
           if (currentUser.isHasProfile == true) {
             if(currentUser?.role != 'admin'){
+              UserinfoUtil.saveCurrentUser(currentUser);
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => Layout()),
               );
             }else{
+              UserinfoUtil.saveCurrentUser(currentUser);
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => AdminPage()),
               );
             }
           } else {
+            UserinfoUtil.saveCurrentUser(currentUser);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -225,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                   )),
             );
           } else {
-            saveCurrentUser(user);
+            UserinfoUtil.saveCurrentUser(user);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => Layout()),);
@@ -271,7 +238,7 @@ class _LoginPageState extends State<LoginPage> {
         margin: EdgeInsets.symmetric(vertical: 20),
         padding: EdgeInsets.all(15),
         alignment: Alignment.bottomCenter,
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
@@ -334,11 +301,11 @@ class _LoginPageState extends State<LoginPage> {
                   children: <Widget>[
                     SizedBox(height: height * .2),
                     _title(),
-                    SizedBox(
+                    const SizedBox(
                       height: 50,
                     ),
                     _emailPasswordWidget(),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     _submitButton(),

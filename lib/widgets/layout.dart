@@ -2,12 +2,10 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import 'package:urban_hamony/widgets/screens/galleryScreen.dart';
 import 'package:urban_hamony/widgets/screens/homeScreen.dart';
 import 'package:urban_hamony/widgets/screens/productScreen.dart';
 import 'package:urban_hamony/widgets/screens/profileScreen.dart';
 import 'package:urban_hamony/widgets/screens/projectScreen.dart';
-import 'package:urban_hamony/widgets/screens/cart.dart';
 import '../providers/root.dart';
 
 class Layout extends StatefulWidget {
@@ -60,7 +58,7 @@ class _LayoutState extends State<Layout> {
     var selectedIndex = context.select((RootProvider provider) => provider.pageIndex);
     var setIndex = context.read<RootProvider>().setPageIndex;
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: screens[screenNames[selectedIndex]]!,
       ),

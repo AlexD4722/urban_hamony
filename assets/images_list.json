@@ -52,22 +52,10 @@
       "alternateWidth":50
     },
     {
-      "fileName": "chair4.png",
-      "alternateFileName": "chair4a.png",
-      "alternateHeight": 50,
-      "alternateWidth":50
-    },
-    {
       "fileName": "chair5.png",
       "alternateFileName": "chair5a.png",
-      "alternateHeight": 50,
-      "alternateWidth":50
-    },
-    {
-      "fileName": "chair6.png",
-      "alternateFileName": "chair6a.png",
-      "alternateHeight": 50,
-      "alternateWidth":50
+      "alternateHeight": 25,
+      "alternateWidth":25
     }
   ],
   "Tree": [
@@ -120,13 +108,13 @@
   "Window": [
     {
       "fileName": "window1.png",
-      "alternateFileName": "window3.png",
+      "alternateFileName": "window1a.png",
       "alternateHeight": 60,
       "alternateWidth":40
     },
     {
       "fileName": "window2.png",
-      "alternateFileName": "window3.png",
+      "alternateFileName": "window2a.png",
       "alternateHeight": 60,
       "alternateWidth":40
     },
@@ -153,18 +141,43 @@
       "alternateFileName": "window6a.png",
       "alternateHeight": 60,
       "alternateWidth":40
+    },
+    {
+      "fileName": "window7.png",
+      "alternateFileName": "window7a.png",
+      "alternateHeight": 60,
+      "alternateWidth":40
+    }
+  ,
+    {
+      "fileName": "window8.png",
+      "alternateFileName": "window8a.png",
+      "alternateHeight": 60,
+      "alternateWidth":40
     }
   ],
   "Bed": [
     {
       "fileName": "bed1.png",
-      "alternateFileName": "bed3.png",
+      "alternateFileName": "bed1a.png",
       "alternateHeight": 60,
       "alternateWidth":40
     },
     {
       "fileName": "bed2.png",
-      "alternateFileName": "bed3.png",
+      "alternateFileName": "bed2a.png",
+      "alternateHeight": 60,
+      "alternateWidth":40
+    },
+    {
+      "fileName": "bed3.png",
+      "alternateFileName": "bed3a.png",
+      "alternateHeight": 60,
+      "alternateWidth":40
+    },
+    {
+      "fileName": "bed4.png",
+      "alternateFileName": "bed4a.png",
       "alternateHeight": 60,
       "alternateWidth":40
     }

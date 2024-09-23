@@ -8,22 +8,6 @@ import 'package:urban_hamony/services/database_service.dart';
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final DatabaseService _databaseService = DatabaseService();
-  // signInWithEmailAndPassword(String email, String password) async {
-  //   try {
-  //     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-  //         email: email,
-  //         password: password
-  //     );
-  //     print('signin success');
-  //   } on FirebaseAuthException catch (e) {
-  //     if (e.code == 'user-not-found') {
-  //       print('No user found for that email.');
-  //     } else if (e.code == 'wrong-password') {
-  //       print('Wrong password provided for that user.');
-  //     }
-  //   }
-  // }
-
   signOut() async {
     try{
       await FirebaseAuth.instance.signOut();
@@ -32,25 +16,6 @@ class AuthService {
       print(e);
     }
   }
-
-  // signUpWithEmailAndPassword(String email, String password) async {
-  //   try {
-  //     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-  //         email: email,
-  //         password: password
-  //     );
-  //     print('signup success');
-  //   } on FirebaseAuthException catch (e) {
-  //     if (e.code == 'weak-password') {
-  //       print('The password provided is too weak.');
-  //     } else if (e.code == 'email-already-in-use') {
-  //       print('email-already-in-use');
-  //     }
-  //   } catch (e) {
-  //     print('loi $e');
-  //   }
-  // }
-
   signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount? gUser = await googleSignIn.signIn();

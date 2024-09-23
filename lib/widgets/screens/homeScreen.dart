@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:provider/provider.dart';
+import 'package:urban_hamony/models/design.dart';
 import 'dart:math' as math;
+import '../../models/auth_model.dart';
 import '../../models/blog_model.dart';
+import '../../providers/root.dart';
 import '../../services/database_service.dart';
+import '../../utils/userInfoUtil.dart';
 import '../components/card/cardBlog.dart';
 import '../components/card/cardProject.dart';
 import 'drawScreen.dart';
@@ -9,11 +15,16 @@ import 'drawScreen.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
+  Future<UserModel?> _getCurrentUser() async {
+    return await UserinfoUtil.getCurrentUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     DatabaseService _databaseService = DatabaseService();
-    List<BlogModel> _generateBlogsList(List<BlogModel> blog){
-      List<BlogModel> blogs = blog.map((c) {
+
+    List<BlogModel> _generateBlogsList(List<BlogModel> blog) {
+      return blog.map((c) {
         return BlogModel(
           id: c.id,
           status: c.status,
@@ -21,219 +32,295 @@ class HomeScreen extends StatelessWidget {
           category: c.category,
           image: c.image,
           title: c.title,
+          html: c.html,
         );
       }).toList();
-      return blogs;
     }
-    final List<Map<String, String>> projects = [
-      {
-        'title': 'Project 1',
-        'description': 'Description 1',
-        'imageUrl': 'demo.jpg'
-      },
-      {
-        'title': 'Project 2',
-        'description': 'Description 2',
-        'imageUrl': 'demo.jpg'
-      },
-      {
-        'title': 'Project 3',
-        'description': 'Description 3',
-        'imageUrl': 'demo.jpg'
-      },
-      {
-        'title': 'Project 3',
-        'description': 'Description 3',
-        'imageUrl': 'demo.jpg'
-      },
-      {
-        'title': 'Project 3',
-        'description': 'Description 3',
-        'imageUrl': 'demo.jpg'
-      },
-      {
-        'title': 'Project 3',
-        'description': 'Description 3',
-        'imageUrl': 'demo.jpg'
-      },
-      {
-        'title': 'Project 3',
-        'description': 'Description 3',
-        'imageUrl': 'demo.jpg'
-      },
-    ];
-    return CustomScrollView(
-      slivers: [
-        SliverPersistentHeader(
-          pinned: true,
-          delegate: _MyProjectHeaderDelegate(),
-        ),
-        SliverList(
-          delegate: SliverChildListDelegate([
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 220,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: projects.length + 2,
 
-                      itemBuilder: (context, index) {
-                        if (index == 0) {
+    List<Design> _generateDesignList(List<Design> chats) {
+      return chats.map((c) {
+        return Design(
+          id: c.id,
+          name: c.name,
+          image: c.image,
+          description: c.description,
+          width: c.width,
+          height: c.height,
+          roomType: c.roomType,
+          draggableImages: c.draggableImages,
+          status: c.status,
+        );
+      }).toList();
+    }
 
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: _addCardProject(context),
-                          );
-                        } else if (index == projects.length + 1) {
-                          // "Show More" widget at the end of the list
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: _showMoreProject(),
-                          );
-                        } else {
-                          // CardProject items
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                            child: CardProject(
-                              title: projects[index - 1]['title']!,
-                              description: projects[index - 1]['description']!,
-                              imageUrl: projects[index - 1]['imageUrl']!,
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Inspiration',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  StreamBuilder(
-                    stream: _databaseService.getBlogCollection(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        List<BlogModel> data = snapshot.data!;
-                        List<BlogModel> blogs = _generateBlogsList(data);
-                        return SizedBox(
-                          height: 320, // Adjust this height as needed
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: blogs.length + 1, // Increase itemCount by 1
-                            itemBuilder: (context, index) {
-                              if (index == blogs.length) {
-                                // "Show More" widget at the end of the list
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 8, right: 8),
-                                  child: SizedBox(
-                                    width: 280, // Same width as blog cards
-                                    child: _showMoreBlogs(),
-                                  ),
-                                );
-                              } else {
-                                final blog = blogs[index];
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 0, right: 8),
-                                  child: SizedBox(
-                                    width: 280, // Adjust this width as needed
-                                    child: CardBlog(
-                                      imageUrl: blog.image ?? "",
-                                      title: blog.title ?? "",
-                                      description: blog.description ?? "",
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        );
-                      }else{
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Tips',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  StreamBuilder(
-                    stream: _databaseService.getBlogCollection(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        List<BlogModel> data = snapshot.data!;
-                        List<BlogModel> blogs = _generateBlogsList(data);
-                        return SizedBox(
-                          height: 320, // Adjust this height as needed
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: blogs.length + 1, // Increase itemCount by 1
-                            itemBuilder: (context, index) {
-                              if (index == blogs.length) {
-                                // "Show More" widget at the end of the list
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 8, right: 8),
-                                  child: SizedBox(
-                                    width: 280, // Same width as blog cards
-                                    child: _showMoreBlogs(),
-                                  ),
-                                );
-                              } else {
-                                final blog = blogs[index];
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 0, right: 8),
-                                  child: SizedBox(
-                                    width: 280, // Adjust this width as needed
-                                    child: CardBlog(
-                                      imageUrl: blog.image ?? "",
-                                      title: blog.title ?? "",
-                                      description: blog.description ?? "",
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        );
-                      }else{
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    },
-                  ),
-                ],
+    return FutureBuilder<UserModel?>(
+      future: _getCurrentUser(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data == null) {
+          return Center(child: Text('No user found'));
+        } else {
+          UserModel currentUser = snapshot.data!;
+          return CustomScrollView(
+            slivers: [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _MyProjectHeaderDelegate(),
               ),
-            ),
-          ]),
-        ),
-      ],
+              SliverList(
+                delegate: SliverChildListDelegate([
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        StreamBuilder<List<Design>>(
+                          stream: _databaseService.getDesignsByEmail(currentUser.email ?? ''),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              List<Design> data = snapshot.data!;
+                              List<Design> designs = _generateDesignList(data);
+                              return SizedBox(
+                                height: 220,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: designs.length + 2,
+                                  itemBuilder: (context, index) {
+                                    if (index == 0) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(right: 10),
+                                        child: _addCardProject(context),
+                                      );
+                                    } else if (index == designs.length + 1) {
+                                      if (designs.isEmpty) {
+                                        return const SizedBox();
+                                      } else {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(left: 10),
+                                          child: _showMoreProject(context),
+                                        );
+                                      }
+                                    } else {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => DrawScreen(design: designs[index - 1]),
+                                              ),
+                                            );
+                                          },
+                                          child: CardProject(
+                                            title: designs[index - 1].name,
+                                            description: designs[index - 1].description,
+                                            imageUrl: designs[index - 1].image,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Center(child: Text('Error: ${snapshot.error}'));
+                            } else {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Public',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        StreamBuilder<List<Design>>(
+                          stream: _databaseService.getAllDesignsWithStatus2(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              List<Design> data = snapshot.data!;
+                              List<Design> designs = _generateDesignList(data);
+                              return SizedBox(
+                                height: 220,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: designs.length + 2,
+                                  itemBuilder: (context, index) {
+                                    if (index == 0) {
+                                      return const SizedBox();
+                                    } else if (index == designs.length + 1) {
+                                      if (designs.isEmpty) {
+                                        return const SizedBox();
+                                      } else {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(left: 10),
+                                          child: _showMoreProject(context),
+                                        );
+                                      }
+                                    } else {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => DrawScreen(design: designs[index - 1]),
+                                              ),
+                                            );
+                                          },
+                                          child: CardProject(
+                                            title: designs[index - 1].name,
+                                            description: designs[index - 1].description,
+                                            imageUrl: designs[index - 1].image,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Center(child: Text('Error: ${snapshot.error}'));
+                            } else {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                          },
+                        ),
+
+                        const Text(
+                          'Inspiration',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        StreamBuilder(
+                          stream: _databaseService.getBlogCollection(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              List<BlogModel> data = snapshot.data!;
+                              List<BlogModel> blogs = _generateBlogsList(data);
+                              return SizedBox(
+                                height: 320,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: blogs.length + 1,
+                                  itemBuilder: (context, index) {
+                                    if (index == blogs.length) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(left: 8, right: 8),
+                                        child: SizedBox(
+                                          width: 280,
+                                          child: _showMoreBlogs(),
+                                        ),
+                                      );
+                                    } else {
+                                      final blog = blogs[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(left: 0, right: 8),
+                                        child: SizedBox(
+                                          width: 280,
+                                          child: CardBlog(
+                                            htmlContent: blog.html ?? "<h1>Content Null</h1>",
+                                            imageUrl: blog.image ?? "",
+                                            title: blog.title ?? "",
+                                            description: blog.description ?? "",
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              );
+                            } else {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Tips',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        StreamBuilder(
+                          stream: _databaseService.getBlogCollection(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              List<BlogModel> data = snapshot.data!;
+                              List<BlogModel> blogs = _generateBlogsList(data);
+                              return SizedBox(
+                                height: 320,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: blogs.length + 1,
+                                  itemBuilder: (context, index) {
+                                    if (index == blogs.length) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(left: 8, right: 8),
+                                        child: SizedBox(
+                                          width: 280,
+                                          child: _showMoreBlogs(),
+                                        ),
+                                      );
+                                    } else {
+                                      final blog = blogs[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(left: 0, right: 8),
+                                        child: SizedBox(
+                                          width: 280,
+                                          child: CardBlog(
+                                            htmlContent: blog.html ?? "<h1>Content Blog is Null</h1>",
+                                            imageUrl: blog.image ?? "",
+                                            title: blog.title ?? "",
+                                            description: blog.description ?? "",
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              );
+                            } else {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ]),
+              ),
+            ],
+          );
+        }
+      },
     );
   }
 
   Widget _addCardProject(BuildContext context) {
     return GestureDetector(
       onTap: () => {
-      Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => DrawScreen()),
-      )
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DrawScreen()),
+        )
       },
       child: Column(
         children: [
@@ -253,8 +340,8 @@ class HomeScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Color(0xfffbb448), // Light green
-                        Color(0xffe46b10), // Dark green
+                        Color(0xfffbb448),
+                        Color(0xffe46b10),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -321,11 +408,11 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _showMoreProject() {
+  Widget _showMoreProject(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Handle "Show More" action
-        // For example: Navigator.push(context, MaterialPageRoute(builder: (context) => AllProjectsScreen()));
+        var setIndex = context.read<RootProvider>().setPageIndex;
+        setIndex(2);
       },
       child: Column(
         children: [
@@ -478,6 +565,7 @@ class HomeScreen extends StatelessWidget {
 class _MyProjectHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double minHeight = 1;
   final double maxHeight = 60.0;
+
   _MyProjectHeaderDelegate();
 
   @override
@@ -512,16 +600,19 @@ class _MyProjectHeaderDelegate extends SliverPersistentHeaderDelegate {
           AnimatedOpacity(
             opacity: opacity,
             duration: const Duration(milliseconds: 150),
-            child: const Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding: EdgeInsets.only(left: 16.0, bottom: 16.0),
-                child: Text(
-                  "My Profile",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+            child: Container(
+              color: Colors.white,
+              child: const Align(
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 16.0, bottom: 16.0),
+                  child: Text(
+                    "My Profile",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ),

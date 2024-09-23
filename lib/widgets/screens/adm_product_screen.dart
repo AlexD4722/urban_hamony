@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:urban_hamony/models/product_model.dart';
 import 'package:urban_hamony/services/database_service.dart';
 import 'package:urban_hamony/widgets/screens/add_product_screen.dart';
 import 'package:urban_hamony/widgets/screens/product_detail_screen.dart';
 
+import 'detailScreen.dart';
+
 class ProductListPage extends StatefulWidget {
   const ProductListPage({Key? key}) : super(key: key);
-
-
 
   @override
   _ProductListPageState createState() => _ProductListPageState();
@@ -15,8 +16,9 @@ class ProductListPage extends StatefulWidget {
 
 class _ProductListPageState extends State<ProductListPage> {
   DatabaseService _databaseService = DatabaseService();
-  List<ProductModel> _generateProductsList(List<ProductModel> chats){
-    List<ProductModel> products = chats.map((c) {
+
+  List<ProductModel> _generateProductsList(List<ProductModel> chats) {
+    return chats.where((c) => c.status == "1").map((c) {
       return ProductModel(
         name: c.name,
         code: c.code,
@@ -25,22 +27,30 @@ class _ProductListPageState extends State<ProductListPage> {
         status: c.status,
         category: c.category,
         quantity: c.quantity,
-        urlImages: c.urlImages
+        urlImages: c.urlImages,
       );
     }).toList();
-    return products;
   }
 
+  void _deleteProduct(String productId) async {
+    await _databaseService.updateProductStatusByCode(productId, "0");
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(
-        "Product List",
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
+      backgroundColor: const Color(0xFFFFFFFF),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text(
+          "Product List",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
-      ),
         actions: [
           IconButton(
             icon: Icon(
@@ -58,60 +68,92 @@ class _ProductListPageState extends State<ProductListPage> {
         ],
       ),
       body: StreamBuilder(
-          stream: _databaseService.getProductCollection(),
-          builder: (context, snapshot){
-            if(snapshot.hasData){
-              List<ProductModel> data = snapshot.data!;
-              List<ProductModel> products = _generateProductsList(
-                  data
-              );
+        stream: _databaseService.getProductCollection(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<ProductModel> data = snapshot.data!;
+            List<ProductModel> products = _generateProductsList(data);
             return Center(
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 500),
-                child: ListView.builder(
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 0.75,
+                  ),
                   itemCount: products.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => SecondPage(
-                              heroTag: index,
-                              product: products[index],
-                            )));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Hero(
-                              tag: index,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Container(
-                                  width: 150,
-                                  height: 100,
-                                  child: Image.network(
-                                  fit: BoxFit.cover,
-                                  products[index].urlImages[0]!,
-                                ),
-                                )
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: ListTile(// Icon đại diện cho sản phẩm
-                                title: Text('Name: ${products[index].name}'),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Price: \$${products[index].price}'),
-                                    Text('Quantity: ${products[index].quantity}'),
-                                    Text('Description: ${products[index].description}'),
-                                  ],
+                    return Card(
+                      color: Colors.white,
+                      elevation: 5,
+                      margin: const EdgeInsets.all(10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ProductDetailsScreen(
+                                product: products[index],
+                              )));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Hero(
+                                tag: index,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 150,
+                                    child: CachedNetworkImage(
+                                      imageUrl: products[index].urlImages[0] ?? "",
+                                      placeholder: (context, url) => CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) => Icon(Icons.error),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 8),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        products[index].name ?? "",
+                                        style: Theme.of(context).textTheme.bodyMedium,
+                                        maxLines: 2,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "\$${products[index].price}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xfffbb448),
+                                            ),
+                                          ),
+                                          IconButton(
+                                            icon: Icon(Icons.delete, color: Colors.red),
+                                            onPressed: () => _deleteProduct(products[index].code ?? ""),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );
@@ -119,26 +161,15 @@ class _ProductListPageState extends State<ProductListPage> {
                 ),
               ),
             );
-
-          }else {
-              return Center(
-                child: CircularProgressIndicator(color: Colors.pinkAccent,),
-              );
-            }
-    }
+          } else {
+            return Center(
+              child: CircularProgressIndicator(
+                color: Colors.pinkAccent,
+              ),
+            );
+          }
+        },
       ),
     );
   }
-
-
 }
-
-
-final List<String> _images = [
-  'https://images.pexels.com/photos/167699/pexels-photo-167699.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-  'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-  'https://images.pexels.com/photos/273935/pexels-photo-273935.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-  'https://images.pexels.com/photos/1591373/pexels-photo-1591373.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-  'https://images.pexels.com/photos/462024/pexels-photo-462024.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-  'https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
-];
