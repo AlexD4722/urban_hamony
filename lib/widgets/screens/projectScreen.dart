@@ -90,7 +90,7 @@ class ProjectScreen extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
-                                      child: CardProjectScreen(design: designs[0]),
+                                      child: CardProjectScreen(design: designs[startIndex]),
                                     ),
                                     SizedBox(width: 10),
                                     Expanded(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/cartProvider.dart';
+import '../../services/stripe_service.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -111,34 +112,42 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          height: 80,
-          child: _isFormValid
-              ? InkWell(
-            onTap: () => {},
+      bottomNavigationBar: Consumer<CartProvider>(
+        builder: (context, cartProvider, child) {
+          double totalAmount = cartProvider.totalPrice;
+          return BottomAppBar(
+            color: Colors.white,
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              decoration: BoxDecoration(
-                color: const Color(0xfffbb448),
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: const Center(
-                child: Text(
-                  "Payment Now",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              height: 80,
+              child: _isFormValid
+                  ? InkWell(
+                onTap: () => {
+                  // Handle payment here
+                  StripeService.instance.makePayment(totalAmount.toInt(), context, null)
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  decoration: BoxDecoration(
+                    color: const Color(0xfffbb448),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Payment Now",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              )
+                  : null,
             ),
-          )
-              : null,
-        ),
+          );
+        },
       ),
     );
   }

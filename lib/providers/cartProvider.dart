@@ -23,4 +23,8 @@ class CartProvider with ChangeNotifier {
     }
     return total;
   }
+  void clearCart() {
+    _demoCarts.clear();
+    notifyListeners();
+  }
 }
